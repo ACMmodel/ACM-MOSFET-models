@@ -1,0 +1,38 @@
+:root{--bg:#ffffff;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--rule:#e4e3df;--link:#1c5cab;--code:#f3f2ee}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--surface:#1a1a19;--ink:#f4f3ee;
+--ink2:#c3c2b7;--rule:#383835;--link:#86b6ef;--code:#26261f}}
+:root[data-theme="dark"]{--bg:#141413;--surface:#1a1a19;--ink:#f4f3ee;--ink2:#c3c2b7;--rule:#383835;--link:#86b6ef;
+--code:#26261f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{border-bottom:1px solid var(--rule);background:var(--surface)}
+header nav{max-width:62rem;margin:0 auto;padding:.75rem 16px;display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;
+align-items:baseline}
+header nav .brand{font-weight:600;color:var(--ink);margin-right:auto}
+main{max-width:62rem;margin:0 auto;padding:1.5rem 16px 3rem}
+a{color:var(--link)}
+h1{font-size:1.7rem;line-height:1.25;margin:.5rem 0 1rem}
+h2{font-size:1.3rem;margin:2.5rem 0 .75rem;padding-top:.5rem;border-top:1px solid var(--rule)}
+h3{font-size:1.05rem;margin:1.75rem 0 .5rem}
+p,li{max-width:75ch}
+p:has(mjx-container[display="true"]){max-width:none}
+code{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.88em;background:var(--code);
+padding:.05em .3em;border-radius:3px}
+.table-wrap{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;font-size:.88rem}
+th,td{border-bottom:1px solid var(--rule);padding:.3rem .6rem;text-align:left;vertical-align:top}
+th{color:var(--ink2);font-weight:600}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:.2rem 0}
+figure{margin:1.5rem 0;padding:0}
+figure img{display:block;width:auto;max-width:100%;height:auto;background:#fcfcfb;border:1px solid var(--rule);border-radius:6px}
+figcaption{font-size:.92rem;color:var(--ink2);margin-top:.5rem;max-width:none}
+figcaption strong{color:var(--ink)}
+.data{white-space:nowrap}
+.toc{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.75rem 1.25rem;margin:1.25rem 0}
+.toc ul{margin:.25rem 0;padding-left:0;list-style:none;columns:2 18rem}
+.lead{color:var(--ink2)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;margin:1.5rem 0}
+.card{border:1px solid var(--rule);border-radius:8px;padding:1rem 1.25rem;background:var(--surface)}
+.card h2{border:0;margin:0 0 .5rem;padding:0;font-size:1.15rem}
+footer{max-width:62rem;margin:0 auto;padding:1.5rem 16px;color:var(--ink2);font-size:.88rem;
+border-top:1px solid var(--rule)}

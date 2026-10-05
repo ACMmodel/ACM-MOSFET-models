@@ -1,0 +1,277 @@
+* ACM3 (acm3_va) NMOS perL cards for IHP SG13G2 low-voltage devices, 27 C.
+* Model: models/acm3.va (Version 3.0.0). Usage (ngspice with OSDI):
+*   pre_osdi acm3.osdi   (build: openvaf-r acm3.va)
+*   .include acm3_nmos_perL.lib
+*   N1 d g s b <card name> w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+* Validity: each card is valid at its L and for W >= 2 um. V_B = 0 extraction (body effect not measured).
+* Specific current: I_S = ish*w/l of the instance (ish = I_S L/W of the extraction).
+* DC parameters: extracted from the IHP measurements https://github.com/IHP-GmbH/IHP-Open-PDK/tree/main/ihp-sg13g2/libs.doc/meas/MOS/SG13_nmosXm1Y3
+*   (300 K, V_B = 0; differential evolution + L-BFGS-B on I_D-V_G, I_D-V_D and their derivatives).
+* tox = 2.2404e-09 m and epsrox = 3.9: IHP PSP103 card (TOXO, EPSROXO).
+* dlc (charge length l - dlc) and ld (overlap length): fitted to the PSP103 gate-row capacitances
+*   (C_gs, C_gd, C_gb at 100 MHz, V_GS 0-1.2 V, V_DS 0 and 1.2 V) of the W = 10 um devices; one ld for all L.
+*   dlc is an effective per-card value: at L >= 0.5 um it also absorbs the lower PSP inversion capacitance
+*   (fitted scale L_C/L = 0.6-0.8), not only a length offset. Each card states its capacitance-fit RMS.
+* Junction: fitted to the PSP103 drain-junction C(V), 0-1.2 V reverse, four layouts (RMS 0.17 %).
+* Not extracted (model defaults): temperature coefficients, flicker noise n_ot, mismatch avt0/ak.
+* rg = 0: set the gate resistance per device on the instance line.
+
+* Extracted at W = 10 um, L = 0.12 um; use at L = 0.12 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 5.3 % of C_gg
+.model acm3n_L0p12 acm3_va
++ type=1
++ vt0=0.5132055189
++ ish=2.734116979e-07
++ phi=1.320626099
++ gamma=1.081031185
++ theta=0.03497005115
++ zeta=0.0351566696
++ sigma_wi=0.05032451841
++ sigma_si=0.1651367796
++ dlc=9.180134561e-08
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.13 um; use at L = 0.13 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 5.3 % of C_gg
+.model acm3n_L0p13 acm3_va
++ type=1
++ vt0=0.485696792
++ ish=2.551388153e-07
++ phi=1.469882804
++ gamma=0.9764860798
++ theta=0.0321255428
++ zeta=0.03316833683
++ sigma_wi=0.03664311821
++ sigma_si=0.1389291773
++ dlc=9.336026878e-08
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.14 um; use at L = 0.14 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg
+.model acm3n_L0p14 acm3_va
++ type=1
++ vt0=0.4645922059
++ ish=2.455106249e-07
++ phi=1.402133622
++ gamma=0.8566561232
++ theta=0.03060339074
++ zeta=0.03180400181
++ sigma_wi=0.02616266885
++ sigma_si=0.127371486
++ dlc=9.521964356e-08
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.15 um; use at L = 0.15 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg
+.model acm3n_L0p15 acm3_va
++ type=1
++ vt0=0.4490686574
++ ish=2.399676864e-07
++ phi=1.965597379
++ gamma=0.9506957774
++ theta=0.02898131355
++ zeta=0.03012145125
++ sigma_wi=0.02196049257
++ sigma_si=0.1175067779
++ dlc=9.694421299e-08
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.18 um; use at L = 0.18 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 6.2 % of C_gg
+.model acm3n_L0p18 acm3_va
++ type=1
++ vt0=0.4046131529
++ ish=2.411988375e-07
++ phi=1.273232237
++ gamma=0.7162024525
++ theta=0.027037899
++ zeta=0.02737693689
++ sigma_wi=0.01436962839
++ sigma_si=0.1140311162
++ dlc=1.051124642e-07
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.5 um; use at L = 0.5 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 10.7 % of C_gg
+.model acm3n_L0p5 acm3_va
++ type=1
++ vt0=0.3250980142
++ ish=2.92044227e-07
++ phi=1.38167245
++ gamma=0.6357178375
++ theta=0.02306277199
++ zeta=0.01608448276
++ sigma_wi=0.0081326307
++ sigma_si=0.1136735163
++ dlc=1.936228561e-07
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 1.2 um; use at L = 1.2 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 12.3 % of C_gg
+.model acm3n_L1p2 acm3_va
++ type=1
++ vt0=0.2906357198
++ ish=2.974269499e-07
++ phi=1.674810661
++ gamma=0.6314078167
++ theta=0.02049794333
++ zeta=0.009351264284
++ sigma_wi=0.01000112041
++ sigma_si=0.08079970414
++ dlc=3.861261835e-07
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 2 um; use at L = 2 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 17.0 % of C_gg
+.model acm3n_L2 acm3_va
++ type=1
++ vt0=0.2809048021
++ ish=3.370595398e-07
++ phi=0.7028903739
++ gamma=0.4926448308
++ theta=0.02566316574
++ zeta=0.007369292839
++ sigma_wi=0.008887228892
++ sigma_si=0.0673483484
++ dlc=7.655057271e-07
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 5 um; use at L = 5 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 16.6 % of C_gg
+.model acm3n_L5 acm3_va
++ type=1
++ vt0=0.2574597668
++ ish=3.438337404e-07
++ phi=1.518953287
++ gamma=0.698517545
++ theta=0.02578062963
++ zeta=0.005168634972
++ sigma_wi=0.007824363634
++ sigma_si=0.05069344738
++ dlc=1.725982031e-06
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 10 um; use at L = 10 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 16.6 % of C_gg
+.model acm3n_L10 acm3_va
++ type=1
++ vt0=0.2355564144
++ ish=3.33711921e-07
++ phi=1.668716992
++ gamma=0.7571431323
++ theta=0.02495729533
++ zeta=0.003798410653
++ sigma_wi=0.008246373034
++ sigma_si=0.03874262699
++ dlc=3.43624363e-06
++ ld=4.264433257e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4

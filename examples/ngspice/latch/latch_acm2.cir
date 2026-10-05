@@ -1,0 +1,30 @@
+* SR latch: cross-coupled inverters with NMOS set/reset pull-downs, L = 0.13 um (ACM2, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm2_nmos_point.lib
+.include ../../../cards/ihp_sg13g2/acm2_pmos_point.lib
+
+Vdd vdd 0 1.2
+Vs s 0 pulse(0 1.2 1n 50p 50p 1n 10n)
+Vr r 0 pulse(0 1.2 6n 50p 50p 1n 10n)
+NAn q qb 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NAp q qb vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NBn qb q 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NBp qb q vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+Nset qb s 0 0 acm2n_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+Nrst q r 0 0 acm2n_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+Cq q 0 5f
+Cqb qb 0 5f
+.ic v(q)=0 v(qb)=1.2
+.control
+pre_osdi ../../../models/acm2.osdi
+set noaskquit
+set numdgt=8
+tran 2p 12n
+meas tran q_after_set find v(q) at=4n
+meas tran q_after_reset find v(q) at=9n
+meas tran t_set trig v(s) val=0.6 rise=1 targ v(q) val=0.6 rise=1
+meas tran t_reset trig v(r) val=0.6 rise=1 targ v(q) val=0.6 fall=1
+print q_after_set q_after_reset t_set t_reset > latch_acm2_results.txt
+quit
+.endc
+.end

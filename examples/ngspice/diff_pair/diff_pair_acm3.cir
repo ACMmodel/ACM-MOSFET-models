@@ -1,0 +1,34 @@
+* Differential pair with PMOS mirror load (five-transistor OTA), L = 0.5 um, I_tail = 200 uA, C_L = 200 fF (ACM3, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm3_nmos_perL.lib
+.include ../../../cards/ihp_sg13g2/acm3_pmos_perL.lib
+
+Vdd vdd 0 1.2
+Vcm cm 0 0.7
+Vid inp cm dc 0 ac 0.5
+Ein inn cm inp cm -1
+N1 x inp tail 0 acm3n_L0p5 w=10u l=0.5u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+N2 out inn tail 0 acm3n_L0p5 w=10u l=0.5u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+N3 x x vdd vdd acm3p_L0p5 w=20u l=0.5u ad=6.8p as=6.8p pd=40.68u ps=40.68u
+N4 out x vdd vdd acm3p_L0p5 w=20u l=0.5u ad=6.8p as=6.8p pd=40.68u ps=40.68u
+Ib vdd b 200u
+N5 b b 0 0 acm3n_L0p5 w=20u l=0.5u ad=6.8p as=6.8p pd=40.68u ps=40.68u
+N6 tail b 0 0 acm3n_L0p5 w=20u l=0.5u ad=6.8p as=6.8p pd=40.68u ps=40.68u
+Cl out 0 200f
+.control
+pre_osdi ../../../models/acm3.osdi
+set noaskquit
+set numdgt=8
+op
+print v(out) v(tail) i(Vdd) > diff_pair_acm3_results.txt
+ac dec 20 1e3 1e11
+meas ac a0_db find vdb(out) at=1e3
+meas ac gbw when vdb(out)=0 fall=1
+print a0_db gbw >> diff_pair_acm3_results.txt
+dc Vid -0.2 0.2 0.002
+meas dc vout_min min v(out)
+meas dc vout_max max v(out)
+print vout_min vout_max >> diff_pair_acm3_results.txt
+quit
+.endc
+.end

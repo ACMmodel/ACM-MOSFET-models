@@ -1,0 +1,48 @@
+* CMOS inverter (NMOS W = 0.6 um, PMOS W = 2 um, L = 0.13 um) and 11-stage ring oscillator (ACM2, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm2_nmos_point.lib
+.include ../../../cards/ihp_sg13g2/acm2_pmos_point.lib
+
+Vdd vdd 0 1.2
+Vin in 0 0
+NI1n vout in 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NI1p vout in vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+* ring oscillator, 11 stages; node r0 starts low
+NR0n r1 r0 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR0p r1 r0 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR1n r2 r1 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR1p r2 r1 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR2n r3 r2 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR2p r3 r2 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR3n r4 r3 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR3p r4 r3 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR4n r5 r4 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR4p r5 r4 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR5n r6 r5 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR5p r6 r5 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR6n r7 r6 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR6p r7 r6 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR7n r8 r7 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR7p r8 r7 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR8n r9 r8 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR8p r9 r8 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR9n r10 r9 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR9p r10 r9 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+NR10n r0 r10 0 0 acm2n_W0p6_L0p13 w=0.6u l=0.13u ad=0.204p as=0.204p pd=1.88u ps=1.88u
+NR10p r0 r10 vdd vdd acm2p_W2_L0p13 w=2u l=0.13u ad=0.68p as=0.68p pd=4.68u ps=4.68u
+.ic v(r0)=0
+.control
+pre_osdi ../../../models/acm2.osdi
+set noaskquit
+set numdgt=8
+dc Vin 0 1.2 0.005
+meas dc vm when v(vout)=v(in)
+print vm > inverter_ring_acm2_results.txt
+tran 2p 8n
+meas tran t1 when v(r0)=0.6 rise=5
+meas tran t2 when v(r0)=0.6 rise=10
+let fosc = 5/(t2 - t1)
+print fosc >> inverter_ring_acm2_results.txt
+quit
+.endc
+.end

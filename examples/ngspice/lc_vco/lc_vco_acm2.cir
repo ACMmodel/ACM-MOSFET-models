@@ -1,0 +1,35 @@
+* Cross-coupled NMOS LC-VCO, 2.45 GHz, W = 100 um, L = 0.13 um, I_tail = 1 mA, ideal tanh varactors (ACM2, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm2_nmos_perL.lib
+
+* Per-L card with W = 100 um (ish scaling); rg = 43 ohm: IHP PDK gate resistance of the 10-finger RF layout.
+.model mvar varactor_tanh cmin=100f cmax=280f v0=0.6 vw=0.3
+Vdd vdd 0 1.2
+L1 vdd outp 2n
+L2 vdd outn 2n
+Rp1 vdd outp 307.9
+Rp2 vdd outn 307.9
+Cf1 outp 0 1.668p
+Cf2 outn 0 1.668p
+Nv1 outp vc mvar
+Nv2 outn vc mvar
+Vctrl vc 0 0.6
+N1 outp outn tail 0 acm2n_L0p13 w=100u l=0.13u ad=20p as=20p pd=100u ps=100u rg=43
+N2 outn outp tail 0 acm2n_L0p13 w=100u l=0.13u ad=20p as=20p pd=100u ps=100u rg=43
+Ibias tail 0 1m
+.ic v(outp)=1.25 v(outn)=1.15
+.control
+pre_osdi ../../../models/acm2.osdi
+pre_osdi varactor_tanh.osdi
+set noaskquit
+set numdgt=8
+tran 5p 40n 0 5p uic
+let vdiff = v(outp) - v(outn)
+meas tran t1 when vdiff=0 rise=40
+meas tran t2 when vdiff=0 rise=80
+let fosc = 40/(t2 - t1)
+meas tran vpp pp vdiff from=30n to=40n
+print fosc vpp > lc_vco_acm2_results.txt
+quit
+.endc
+.end

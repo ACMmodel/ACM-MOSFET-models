@@ -1,0 +1,39 @@
+* Resistive-feedback LNA, NMOS W = 100 um, L = 0.13 um, 1.5 GHz design (ACM3, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm3_nmos_perL.lib
+
+* Per-L card with W = 100 um (ish scaling); rg = 43 ohm: IHP PDK gate resistance of the 10-finger RF layout.
+X1 drain gate 0 0 amp
+.subckt amp d g s b
+N1 d g s b acm3n_L0p13 w=100u l=0.13u ad=20p as=20p pd=100u ps=100u rg=43
+.ends amp
+VDD vdd 0 1.2
+Vbias bias 0 0.5707
+Rbias bias gate 100k
+RL vdd drain 243.3
+CL drain 0 80f
+RF drain fb 601.5
+Cfb fb gate 100p
+Cadd gate 0 1.013p
+Lg gate in_lg 6.966n
+Cin in_lg rf 1n
+Rs rf rfs 50
+Vrf rfs 0 dc 0 ac 1
+.control
+pre_osdi ../../../models/acm3.osdi
+set noaskquit
+set numdgt=8
+op
+print v(drain) i(VDD) > lna_acm3_results.txt
+ac lin 1 1.5e9 1.5e9
+let gain_db = db(v(drain))
+let s11_db = db(2*v(rf) - 1)
+print gain_db s11_db >> lna_acm3_results.txt
+set sqrnoise
+noise v(drain) Vrf lin 1 1.5e9 1.5e9 1
+setplot noise1
+let nf_db = 10*log10(inoise_spectrum/(4*1.380649e-23*300.15*50))
+print nf_db >> lna_acm3_results.txt
+quit
+.endc
+.end
