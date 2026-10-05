@@ -1,0 +1,1005 @@
+* ACM3 (acm3_va) PMOS point cards for IHP SG13G2 low-voltage devices, 27 C.
+* Model: models/acm3.va (Version 3.0.0). Usage (ngspice with OSDI):
+*   pre_osdi acm3.osdi   (build: openvaf-r acm3.va)
+*   .include acm3_pmos_point.lib
+*   N1 d g s b <card name> w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+* Validity: each card is valid at the W and L of its extraction (stated above the card). V_B = 0 extraction (body effect not measured).
+* Specific current: I_S = ish*w/l of the instance (ish = I_S L/W of the extraction).
+* DC parameters: extracted from the IHP measurements https://github.com/IHP-GmbH/IHP-Open-PDK/tree/main/ihp-sg13g2/libs.doc/meas/MOS/SG13_pmosXm1Y3
+*   (300 K, V_B = 0; differential evolution + L-BFGS-B on I_D-V_G, I_D-V_D and their derivatives).
+* tox = 1.9704e-09 m and epsrox = 3.9: IHP PSP103 card (TOXO, EPSROXO).
+* dlc (charge length l - dlc) and ld (overlap length): fitted to the PSP103 gate-row capacitances
+*   (C_gs, C_gd, C_gb at 100 MHz, V_GS 0-1.2 V, V_DS 0 and 1.2 V) of the W = 10 um devices; one ld for all L.
+*   dlc is an effective per-card value: at L >= 0.5 um it also absorbs the lower PSP inversion capacitance
+*   (fitted scale L_C/L = 0.6-0.8), not only a length offset. Each card states its capacitance-fit RMS.
+* Junction: fitted to the PSP103 drain-junction C(V), 0-1.2 V reverse, four layouts (RMS 0.41 %).
+* Not extracted (model defaults): temperature coefficients, flicker noise n_ot, mismatch avt0/ak.
+* rg = 0: set the gate resistance per device on the instance line.
+
+* Extracted at W = 0.15 um, L = 0.12 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p12 acm3_va
++ type=-1
++ vt0=0.4379715697
++ ish=1.040005382e-07
++ phi=1.887431175
++ gamma=0.9507423531
++ theta=0.01945967223
++ zeta=0.01858823099
++ sigma_wi=0.03503682733
++ sigma_si=0.2112132089
++ dlc=9.480088515e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.12 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p12 acm3_va
++ type=-1
++ vt0=0.4558698393
++ ish=7.031109616e-08
++ phi=1.757020027
++ gamma=1.07081273
++ theta=0.02920012707
++ zeta=0.01379999944
++ sigma_wi=0.04594610759
++ sigma_si=0.2286133946
++ dlc=9.480088515e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p13 acm3_va
++ type=-1
++ vt0=0.4559769024
++ ish=1.127408227e-07
++ phi=1.070336063
++ gamma=0.6201930988
++ theta=0.02469971032
++ zeta=0.0189997405
++ sigma_wi=0.02432285691
++ sigma_si=0.1934397426
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.18 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p18_L0p13 acm3_va
++ type=-1
++ vt0=0.4324338965
++ ish=9.280300296e-08
++ phi=1.024193979
++ gamma=0.7374138772
++ theta=0.02165698774
++ zeta=0.0178787724
++ sigma_wi=0.03938460807
++ sigma_si=0.1860571811
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L0p13 acm3_va
++ type=-1
++ vt0=0.4319060988
++ ish=7.742272774e-08
++ phi=1.465607405
++ gamma=0.7664668663
++ theta=0.02545319139
++ zeta=0.01500402685
++ sigma_wi=0.02071203137
++ sigma_si=0.1626442741
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.6 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p6_L0p13 acm3_va
++ type=-1
++ vt0=0.4588427022
++ ish=7.049000086e-08
++ phi=0.4146476031
++ gamma=0.3630158162
++ theta=0.02474867265
++ zeta=0.01567011588
++ sigma_wi=0.02417752238
++ sigma_si=0.1518621746
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 2 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W2_L0p13 acm3_va
++ type=-1
++ vt0=0.4327188392
++ ish=6.730218498e-08
++ phi=0.8080023666
++ gamma=0.6280690747
++ theta=0.02632186955
++ zeta=0.01469607224
++ sigma_wi=0.02867692862
++ sigma_si=0.1858744072
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 5 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W5_L0p13 acm3_va
++ type=-1
++ vt0=0.4503100658
++ ish=6.707880033e-08
++ phi=1.751808673
++ gamma=0.9346174096
++ theta=0.02784229846
++ zeta=0.01323385704
++ sigma_wi=0.03034034772
++ sigma_si=0.1904123973
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.13 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p13 acm3_va
++ type=-1
++ vt0=0.4438011809
++ ish=6.357792073e-08
++ phi=0.7867486629
++ gamma=0.5962831988
++ theta=0.02701409272
++ zeta=0.0142971728
++ sigma_wi=0.03044121556
++ sigma_si=0.1927229833
++ dlc=9.652522352e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 0.14 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p14 acm3_va
++ type=-1
++ vt0=0.4306224456
++ ish=1.0405595e-07
++ phi=1.576876105
++ gamma=0.7647226094
++ theta=0.0221276368
++ zeta=0.01797874335
++ sigma_wi=0.01922846227
++ sigma_si=0.1821745217
++ dlc=9.829965754e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.18 um, L = 0.14 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p18_L0p14 acm3_va
++ type=-1
++ vt0=0.4424836351
++ ish=8.632607192e-08
++ phi=1.0766958
++ gamma=0.5966763198
++ theta=0.02172366137
++ zeta=0.01707312747
++ sigma_wi=0.02437872576
++ sigma_si=0.172156463
++ dlc=9.829965754e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 0.14 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L0p14 acm3_va
++ type=-1
++ vt0=0.4394529569
++ ish=8.048330691e-08
++ phi=1.78830462
++ gamma=0.9525463966
++ theta=0.02588894514
++ zeta=0.01564261983
++ sigma_wi=0.02035046074
++ sigma_si=0.177959343
++ dlc=9.829965754e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.14 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p14 acm3_va
++ type=-1
++ vt0=0.4389973675
++ ish=6.377819206e-08
++ phi=1.436922656
++ gamma=0.8074917968
++ theta=0.02756270613
++ zeta=0.01277861428
++ sigma_wi=0.0223607928
++ sigma_si=0.1754479413
++ dlc=9.829965754e-08
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 0.15 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p15 acm3_va
++ type=-1
++ vt0=0.4057409608
++ ish=1.036832862e-07
++ phi=1.305429468
++ gamma=0.6576026439
++ theta=0.02242623683
++ zeta=0.01606538179
++ sigma_wi=0.01762672925
++ sigma_si=0.1527613749
++ dlc=1.006708768e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.18 um, L = 0.15 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p18_L0p15 acm3_va
++ type=-1
++ vt0=0.4204153721
++ ish=8.478079416e-08
++ phi=1.344401815
++ gamma=0.7285483589
++ theta=0.02074626087
++ zeta=0.01414530624
++ sigma_wi=0.01008736121
++ sigma_si=0.1436020208
++ dlc=1.006708768e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 0.15 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L0p15 acm3_va
++ type=-1
++ vt0=0.4379344459
++ ish=7.510004515e-08
++ phi=1.46481955
++ gamma=0.6702951683
++ theta=0.02443385449
++ zeta=0.0128690697
++ sigma_wi=0.01281957637
++ sigma_si=0.1312864445
++ dlc=1.006708768e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.15 um. C_gs/C_gd/C_gb fit RMS 5.2 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p15 acm3_va
++ type=-1
++ vt0=0.4251310327
++ ish=6.373874552e-08
++ phi=1.930684687
++ gamma=0.937088097
++ theta=0.02740533402
++ zeta=0.01157314748
++ sigma_wi=0.01806274586
++ sigma_si=0.1598557128
++ dlc=1.006708768e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 0.18 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p18 acm3_va
++ type=-1
++ vt0=0.399658728
++ ish=9.469726428e-08
++ phi=1.9494311
++ gamma=0.8199221655
++ theta=0.02050165697
++ zeta=0.01440944992
++ sigma_wi=0.01514637345
++ sigma_si=0.1472709646
++ dlc=1.080964388e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 0.18 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L0p18 acm3_va
++ type=-1
++ vt0=0.4440648716
++ ish=8.187848563e-08
++ phi=0.9903025627
++ gamma=0.6210392126
++ theta=0.02805011587
++ zeta=0.01227098053
++ sigma_wi=0.003609951435
++ sigma_si=0.120590048
++ dlc=1.080964388e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.6 um, L = 0.18 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p6_L0p18 acm3_va
++ type=-1
++ vt0=0.4072001872
++ ish=7.464829704e-08
++ phi=1.954072279
++ gamma=0.863181308
++ theta=0.02543522225
++ zeta=0.01212481156
++ sigma_wi=0.01076907296
++ sigma_si=0.1280013035
++ dlc=1.080964388e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.18 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p18 acm3_va
++ type=-1
++ vt0=0.4117690875
++ ish=6.079292806e-08
++ phi=1.701209616
++ gamma=0.806699482
++ theta=0.02499991147
++ zeta=0.01095270442
++ sigma_wi=0.009231835764
++ sigma_si=0.1410398039
++ dlc=1.080964388e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 0.5 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L0p5 acm3_va
++ type=-1
++ vt0=0.3754309735
++ ish=8.196700441e-08
++ phi=1.891095884
++ gamma=0.6639848493
++ theta=0.01691917672
++ zeta=0.008497342286
++ sigma_wi=0.008201197197
++ sigma_si=0.07164032635
++ dlc=2.008922174e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 0.5 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L0p5 acm3_va
++ type=-1
++ vt0=0.3817733827
++ ish=6.864946712e-08
++ phi=1.230532349
++ gamma=0.5332970548
++ theta=0.01689855667
++ zeta=0.007666701655
++ sigma_wi=0.004649586276
++ sigma_si=0.06873039997
++ dlc=2.008922174e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.6 um, L = 0.5 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W0p6_L0p5 acm3_va
++ type=-1
++ vt0=0.3793423788
++ ish=6.798158846e-08
++ phi=1.069497323
++ gamma=0.5068733519
++ theta=0.01874046304
++ zeta=0.008577979381
++ sigma_wi=0.005609559223
++ sigma_si=0.07355781521
++ dlc=2.008922174e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 0.5 um. C_gs/C_gd/C_gb fit RMS 5.4 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L0p5 acm3_va
++ type=-1
++ vt0=0.3865275338
++ ish=5.495899131e-08
++ phi=1.879041063
++ gamma=0.7580975541
++ theta=0.02144945364
++ zeta=9.17582959e-05
++ sigma_wi=0.005017070251
++ sigma_si=0.06389480437
++ dlc=2.008922174e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.6 um, L = 1.2 um. C_gs/C_gd/C_gb fit RMS 6.1 % of C_gg (W = 10 um devices)
+.model acm3p_W0p6_L1p2 acm3_va
++ type=-1
++ vt0=0.3640208822
++ ish=6.660032789e-08
++ phi=1.359346154
++ gamma=0.5512786827
++ theta=0.01731523549
++ zeta=0.006138671873
++ sigma_wi=0.003182816409
++ sigma_si=0.03646994926
++ dlc=4.410624673e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 1.2 um. C_gs/C_gd/C_gb fit RMS 6.1 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L1p2 acm3_va
++ type=-1
++ vt0=0.3742262925
++ ish=5.540490923e-08
++ phi=1.214504247
++ gamma=0.5951919682
++ theta=0.02083200413
++ zeta=0.0002838765138
++ sigma_wi=0.002383859452
++ sigma_si=0.03699174623
++ dlc=4.410624673e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 2 um, L = 2 um. C_gs/C_gd/C_gb fit RMS 8.6 % of C_gg (W = 10 um devices)
+.model acm3p_W2_L2 acm3_va
++ type=-1
++ vt0=0.3703232838
++ ish=6.222700689e-08
++ phi=1.291763819
++ gamma=0.638134999
++ theta=0.02174204848
++ zeta=4.787334406e-05
++ sigma_wi=0.002546291071
++ sigma_si=0.02836363535
++ dlc=7.760196909e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 2 um. C_gs/C_gd/C_gb fit RMS 8.6 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L2 acm3_va
++ type=-1
++ vt0=0.3779763305
++ ish=6.361727611e-08
++ phi=1.502472071
++ gamma=0.7573611759
++ theta=0.02665773439
++ zeta=2.648591245e-05
++ sigma_wi=0.001635062767
++ sigma_si=0.02728392742
++ dlc=7.760196909e-07
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 5 um, L = 5 um. C_gs/C_gd/C_gb fit RMS 3.9 % of C_gg (W = 10 um devices)
+.model acm3p_W5_L5 acm3_va
++ type=-1
++ vt0=0.3680539898
++ ish=6.2015503e-08
++ phi=1.330059459
++ gamma=0.6317176968
++ theta=0.02298868869
++ zeta=0.001117443809
++ sigma_wi=0.0009766011296
++ sigma_si=0.01429984826
++ dlc=1.653424153e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 5 um. C_gs/C_gd/C_gb fit RMS 3.9 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L5 acm3_va
++ type=-1
++ vt0=0.3626516885
++ ish=5.94007063e-08
++ phi=1.454723791
++ gamma=0.5768542329
++ theta=0.02078462978
++ zeta=0.005271473421
++ sigma_wi=0.0007849849272
++ sigma_si=0.01416007521
++ dlc=1.653424153e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.15 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W0p15_L10 acm3_va
++ type=-1
++ vt0=0.3384641186
++ ish=8.243654887e-08
++ phi=1.888945863
++ gamma=0.6865551264
++ theta=0.01767636445
++ zeta=0.004194160978
++ sigma_wi=0.0009988926906
++ sigma_si=0.01216199948
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.18 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W0p18_L10 acm3_va
++ type=-1
++ vt0=0.3374460784
++ ish=7.700758507e-08
++ phi=1.388075185
++ gamma=0.5693646033
++ theta=0.01701496253
++ zeta=0.003645487589
++ sigma_wi=0.0001915380102
++ sigma_si=0.009863732956
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.3 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W0p3_L10 acm3_va
++ type=-1
++ vt0=0.3501199501
++ ish=7.851126537e-08
++ phi=1.876654583
++ gamma=0.746600516
++ theta=0.02102316925
++ zeta=0.000200013581
++ sigma_wi=0.0006496382396
++ sigma_si=0.009365511612
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 0.6 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W0p6_L10 acm3_va
++ type=-1
++ vt0=0.3553976684
++ ish=7.33036608e-08
++ phi=2
++ gamma=0.7532447871
++ theta=0.02203219995
++ zeta=0.0001310110971
++ sigma_wi=0.0003387029345
++ sigma_si=0.008402099253
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 2 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W2_L10 acm3_va
++ type=-1
++ vt0=0.3664200419
++ ish=6.74589713e-08
++ phi=1.145572228
++ gamma=0.6011781964
++ theta=0.02406494128
++ zeta=0.000524918366
++ sigma_wi=0.0006193007911
++ sigma_si=0.01000573331
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 5 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W5_L10 acm3_va
++ type=-1
++ vt0=0.3629446537
++ ish=6.183517237e-08
++ phi=0.9017139922
++ gamma=0.4847370154
++ theta=0.02215977401
++ zeta=0.002897131908
++ sigma_wi=0.0002887829837
++ sigma_si=0.007598161343
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4
+
+* Extracted at W = 10 um, L = 10 um. C_gs/C_gd/C_gb fit RMS 4.0 % of C_gg (W = 10 um devices)
+.model acm3p_W10_L10 acm3_va
++ type=-1
++ vt0=0.3622903277
++ ish=6.026899034e-08
++ phi=1.251591788
++ gamma=0.5296670065
++ theta=0.02098119814
++ zeta=0.005206027665
++ sigma_wi=0.0003414351617
++ sigma_si=0.008828183582
++ dlc=3.289620296e-06
++ ld=2.892876716e-08
++ tox=1.9704e-09
++ epsrox=3.9
++ cj0=0.0008840642831
++ xd_mj=0.3579077876
++ phi_zero=0.668960069
++ cj0sw=0.0002088951183
++ xd_mjsw=0.2714787334
++ phi_zerosw=1.022288069
++ xj=1.5e-07
++ tref=300.15
++ rg=0
++ vddmax=1.4

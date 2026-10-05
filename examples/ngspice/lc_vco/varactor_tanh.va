@@ -1,0 +1,22 @@
+// Ideal charge-based varactor for the LC-VCO example (not a model of a PDK device).
+// C(V) = cmin + (cmax - cmin)/2*(1 + tanh((V - v0)/vw)), V = V(p,n); Q(V) is the exact integral of C(V).
+`include "constants.vams"
+`include "disciplines.vams"
+
+module varactor_tanh(p, n);
+inout p, n;
+electrical p, n;
+parameter real cmin = 100e-15 from (0:inf);
+parameter real cmax = 200e-15 from (0:inf);
+parameter real v0   = 0.6;
+parameter real vw   = 0.3 from (0:inf);
+real v, x, ax, lncosh, q;
+analog begin
+    v  = V(p, n);
+    x  = (v - v0)/vw;
+    ax = abs(x);
+    lncosh = ax + ln(1.0 + exp(-2.0*ax)) - ln(2.0);
+    q  = cmin*v + 0.5*(cmax - cmin)*(v + vw*lncosh);
+    I(p, n) <+ ddt(q);
+end
+endmodule

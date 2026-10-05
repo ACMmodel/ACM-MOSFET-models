@@ -1,0 +1,34 @@
+* Device characterization: I_D-V_G, I_D-V_D, gm/I_D and f_T, W = 10 um, L = 0.13 um (ACM2, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm2_nmos_perL.lib
+.include ../../../cards/ihp_sg13g2/acm2_pmos_perL.lib
+
+N1 dn gn 0 0 acm2n_L0p13 w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+Vgn gn 0 dc 0.6 ac 1
+Vdn dn 0 0.6
+N2 dp gp 0 0 acm2p_L0p13 w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+Vgp gp 0 dc -0.6 ac 1
+Vdp dp 0 -0.6
+.control
+pre_osdi ../../../models/acm2.osdi
+set noaskquit
+set numdgt=8
+set wr_singlescale
+set wr_vecnames
+dc Vgn 0 1.2 0.01 Vdn 0.05 1.2 0.575
+wrdata device_acm2_nmos_idvg.dat i(Vdn)
+dc Vdn 0 1.2 0.01 Vgn 0.4 1.2 0.2
+wrdata device_acm2_nmos_idvd.dat i(Vdn)
+dc Vgp 0 -1.2 -0.01 Vdp -0.05 -1.2 -0.575
+wrdata device_acm2_pmos_idvg.dat i(Vdp)
+op
+let idn = -i(Vdn)
+let idp = i(Vdp)
+print idn @n1[gm_op] idp @n2[gm_op] > device_acm2_results.txt
+ac lin 1 1e6 1e6
+let fTn = abs(real(i(Vdn)))*1e6/abs(imag(i(Vgn)))
+let fTp = abs(real(i(Vdp)))*1e6/abs(imag(i(Vgp)))
+print fTn fTp >> device_acm2_results.txt
+quit
+.endc
+.end

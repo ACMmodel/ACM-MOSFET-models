@@ -1,0 +1,237 @@
+* ACM2 (acm2_va) NMOS perL cards for IHP SG13G2 low-voltage devices, 27 C.
+* Model: models/acm2.va (Version 2.0.0). Usage (ngspice with OSDI):
+*   pre_osdi acm2.osdi   (build: openvaf-r acm2.va)
+*   .include acm2_nmos_perL.lib
+*   N1 d g s b <card name> w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+* Validity: each card is valid at its L and for W >= 2 um. V_B = 0 extraction (body effect not measured).
+* Specific current: I_S = ish*w/l of the instance (ish = I_S L/W of the extraction).
+* DC parameters: extracted from the IHP measurements https://github.com/IHP-GmbH/IHP-Open-PDK/tree/main/ihp-sg13g2/libs.doc/meas/MOS/SG13_nmosXm1Y3
+*   (300 K, V_B = 0; differential evolution + L-BFGS-B on I_D-V_G, I_D-V_D and their derivatives).
+* tox = 2.2404e-09 m and epsrox = 3.9: IHP PSP103 card (TOXO, EPSROXO).
+* dlc (charge length l - dlc) and ld (overlap length): fitted to the PSP103 gate-row capacitances
+*   (C_gs, C_gd, C_gb at 100 MHz, V_GS 0-1.2 V, V_DS 0 and 1.2 V) of the W = 10 um devices; one ld for all L.
+*   dlc is an effective per-card value: at L >= 0.5 um it also absorbs the lower PSP inversion capacitance
+*   (fitted scale L_C/L = 0.6-0.8), not only a length offset. Each card states its capacitance-fit RMS.
+* Junction: fitted to the PSP103 drain-junction C(V), 0-1.2 V reverse, four layouts (RMS 0.17 %).
+* Not extracted (model defaults): temperature coefficients, flicker noise n_ot, mismatch avt0/ak.
+* rg = 0: set the gate resistance per device on the instance line.
+
+* Extracted at W = 10 um, L = 0.12 um; use at L = 0.12 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 3.8 % of C_gg
+.model acm2n_L0p12 acm2_va
++ type=1
++ vt0=0.4771462979
++ ish=1.507688111e-07
++ n=1.343919671
++ sigma=0.05726356568
++ zeta=0.02614679123
++ dlc=8.311475225e-08
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 0.13 um; use at L = 0.13 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 3.5 % of C_gg
+.model acm2n_L0p13 acm2_va
++ type=1
++ vt0=0.4529846555
++ ish=1.420801149e-07
++ n=1.284149341
++ sigma=0.04406827409
++ zeta=0.02561894392
++ dlc=8.462510226e-08
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 0.14 um; use at L = 0.14 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 3.2 % of C_gg
+.model acm2n_L0p14 acm2_va
++ type=1
++ vt0=0.4323247106
++ ish=1.35551144e-07
++ n=1.242957981
++ sigma=0.03339708585
++ zeta=0.02418680335
++ dlc=8.6195395e-08
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 0.15 um; use at L = 0.15 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 3.0 % of C_gg
+.model acm2n_L0p15 acm2_va
++ type=1
++ vt0=0.4164070848
++ ish=1.313530052e-07
++ n=1.213629727
++ sigma=0.02873865018
++ zeta=0.02309390789
++ dlc=8.786806911e-08
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 0.18 um; use at L = 0.18 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 3.1 % of C_gg
+.model acm2n_L0p18 acm2_va
++ type=1
++ vt0=0.3699572484
++ ish=1.300019518e-07
++ n=1.187382787
++ sigma=0.01984288866
++ zeta=0.01910118908
++ dlc=9.473611338e-08
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 0.5 um; use at L = 0.5 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 2.2 % of C_gg
+.model acm2n_L0p5 acm2_va
++ type=1
++ vt0=0.289783997
++ ish=1.554726373e-07
++ n=1.130660636
++ sigma=0.0120860633
++ zeta=0.008310243006
++ dlc=1.517774583e-07
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 1.2 um; use at L = 1.2 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 2.4 % of C_gg
+.model acm2n_L1p2 acm2_va
++ type=1
++ vt0=0.2605735161
++ ish=1.680286385e-07
++ n=1.120882005
++ sigma=0.01380225952
++ zeta=0.004329058122
++ dlc=2.654102884e-07
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 2 um; use at L = 2 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 14.4 % of C_gg
+.model acm2n_L2 acm2_va
++ type=1
++ vt0=0.2421809219
++ ish=1.550595607e-07
++ n=1.000242754
++ sigma=0.01137969958
++ zeta=0.006764901382
++ dlc=4.351910513e-07
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 5 um; use at L = 5 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 16.0 % of C_gg
+.model acm2n_L5 acm2_va
++ type=1
++ vt0=0.2206672696
++ ish=1.585738649e-07
++ n=1
++ sigma=0.01011724898
++ zeta=0.006514454175
++ dlc=1.005543868e-06
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0
+
+* Extracted at W = 10 um, L = 10 um; use at L = 10 um, W >= 2 um. C_gs/C_gd/C_gb fit RMS 13.7 % of C_gg
+.model acm2n_L10 acm2_va
++ type=1
++ vt0=0.2007965294
++ ish=1.587903924e-07
++ n=1.017480891
++ sigma=0.01037101142
++ zeta=0.006126830155
++ dlc=1.86598458e-06
++ ld=3.936479276e-08
++ tox=2.2404e-09
++ epsrox=3.9
++ cj0=0.001002343681
++ xd_mj=0.3053563082
++ phi_zero=0.624367517
++ cj0sw=0.0001812335911
++ xd_mjsw=0.3119342974
++ phi_zerosw=0.8822874042
++ xj=1.5e-07
++ tref=300.15
++ rg=0

@@ -1,0 +1,412 @@
+//==============================================================================
+// ACM2 MOSFET Compact Model - Version 2.0.0
+// Advanced Compact MOSFET model, second generation: one module (acm2_va) for
+// NMOS and PMOS. Parameters, IHP SG13G2 cards and examples:
+// https://github.com/ACMmodel/ACM-MOSFET-models
+//
+// type = +1 : NMOS   |   type = -1 : PMOS
+//
+// Copyright (c) 2026, Universidade Federal de Santa Catarina (UFSC) and
+//                     Universite Grenoble Alpes (UGA)
+// Licensed under the Educational Community License, Version 2.0 (ECL-2.0)
+//
+// Developers:  Deni Germano Alves Neto (Doctoral student, UFSC and UGA)
+//
+// Past developers:
+//              Cristina Missel Adornes (UFSC)
+//              Gabriel Maranhao Soares (UFSC)
+//
+// Supervisors: Prof. Carlos Galup-Montoro
+//              Prof. Marcio Cherem Schneider
+//              Prof. Sylvain Bourdel
+//              Dr.   Manuel J. Barragan
+//
+//==============================================================================
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Operating point output macro (CMC-compatible, no external header required)
+`define OPP(nam,uni,des) (*units=uni, ask="yes", desc=des*) real nam;
+// OPM: quantity of the m parallel devices. m is this module's own instance
+// parameter, not the simulator's $mfactor, so $mfactor stays 1 and the
+// attribute adds no second scaling.
+`define OPM(nam,uni,des) (*units=uni, multiplicity="multiply", ask="yes", desc=des*) real nam;
+
+// Algorithm 443 for normalised charge densities
+`define algo_443(Z,qn) \
+    if (Z < 0.7385) begin \
+        numeratorD   = Z + (4.0/3.0)*Z*Z; \
+        denominatorD = 1.0 + (7.0/3.0)*Z + (5.0/6.0)*Z*Z; \
+        WnD = numeratorD/denominatorD; \
+    end else begin \
+        numeratorD   = ln(Z)*ln(Z) + 2.0*ln(Z) - 3.0; \
+        denominatorD = 7.0*ln(Z)*ln(Z) + 58.0*ln(Z) + 127.0; \
+        WnD = ln(Z) - 24.0*(numeratorD/denominatorD); \
+    end \
+    ZnD   = ln(Z) - WnD - ln(WnD); \
+    TermD = ZnD/(1.0 + WnD); \
+    numeratorED   = 2.0*(1.0+WnD)*(1.0+WnD+(2.0/3.0)*ZnD) - ZnD; \
+    denominatorED = 2.0*(1.0+WnD)*(1.0+WnD+(2.0/3.0)*ZnD) - 2.0*ZnD; \
+    EnD = TermD*(numeratorED/denominatorED); \
+    qn  = WnD*(1.0 + EnD); \
+
+module acm2_va(d, g, s, b);
+
+inout  d, g, s, b;
+electrical d, g, s, b;
+electrical gi;
+
+branch(d,b) BDB;
+branch(s,b) BSB;
+branch(d,s) BDS;
+
+//----------------------------------------------------------------------
+// Parameters
+//----------------------------------------------------------------------
+
+// Device type
+(*desc="Device type: +1=NMOS, -1=PMOS"*)
+parameter integer type = 1 from [-1:1] exclude 0;
+
+// Device dimensions
+(*desc="Channel width",                     units="m",    type="instance"*) parameter real w  = 1e-6   from (0:inf);
+(*desc="Channel length",                    units="m",    type="instance"*) parameter real l  = 1e-6   from (0:inf);
+(*desc="Drain diffusion area",              units="m^2",  type="instance"*) parameter real ad = 2e-12  from [0:inf);
+(*desc="Source diffusion area",             units="m^2",  type="instance"*) parameter real as = 2e-12  from [0:inf);
+(*desc="Drain diffusion perimeter",         units="m",    type="instance"*) parameter real pd = 10e-6  from [0:inf);
+(*desc="Source diffusion perimeter",        units="m",    type="instance"*) parameter real ps = 10e-6  from [0:inf);
+(*desc="Number of transistors in parallel", units="",     type="instance"*) parameter real m  = 1      from [1:inf);
+
+// DC parameters
+(*desc="Threshold voltage", units="V"*) parameter real vt0   = 0.5  from [0:inf);
+(*desc="Sheet specific current I_SH: specific current of one device = ish*w/l", units="A"*) parameter real ish = 5e-6 from (0:inf);
+(*desc="Charge-length offset: lc = l - dlc in charges, capacitances, mobility and noise", units="m"*) parameter real dlc = 0.0 from [0:inf);
+(*desc="Slope factor"*) parameter real n     = 1.3  from [1:3];
+(*desc="Sigma"*) parameter real sigma = 0.03 from [0:inf);
+(*desc="Zeta (0: no velocity saturation)"*) parameter real zeta = 0.05 from [0:inf);
+
+// Junction capacitance parameters
+(*desc="Zero-bias bottom junction cap",         units="F/m^2"*) parameter real cj0        = 4e-3  from [0:inf);
+(*desc="Zero-bias side-wall junction cap",      units="F/m^2"*) parameter real cj0sw      = 4e-3  from [0:inf);
+(*desc="Bottom junction grading coeff"*) parameter real xd_mj      = 0.5   from [0:inf);
+(*desc="Side-wall junction grading coeff"*) parameter real xd_mjsw    = 0.5   from [0:inf);
+(*desc="Bottom junction built-in potential",    units="V"*) parameter real phi_zero   = 0.6   from (0:inf);
+(*desc="Side-wall junction built-in potential", units="V"*) parameter real phi_zerosw = 0.6   from (0:inf);
+
+// Process parameters
+(*desc="Junction depth",      units="m"*) parameter real xj  = 150e-9 from [0:inf);
+(*desc="Gate overlap length",  units="m"*) parameter real ld  = 30e-9  from [0:inf);
+(*desc="Oxide thickness",      units="m"*) parameter real tox = 4e-9   from (0:inf);
+(*desc="Oxide relative permittivity"*) parameter real epsrox = 3.97 from (0:inf);
+
+// Mismatch parameters
+(*desc="vt0 mismatch coefficient", units="V*m", type="instance"*) parameter real avt0 = 0.0 from (-inf:inf);
+(*desc="IS mismatch coefficient",  units="m",   type="instance"*) parameter real ak   = 0.0 from [0:inf);
+
+// Temperature parameters
+(*desc="Parameter reference temperature", units="K"*)                   parameter real tref       = 300.15  from (0:inf);
+(*desc="Device temperature offset",       units="K",   type="instance"*) parameter real dtemp      = 0.0     from (-inf:inf);
+aliasparam trise = dtemp;
+(*desc="vt0 temperature coefficient",     units="V/K"*) parameter real alphavt0   = -0.4e-3 from [-1:1];
+(*desc="IS temperature coefficient"*) parameter real alphais    = 1.5     from [0:inf);
+(*desc="Sigma temperature coefficient"*) parameter real alphasigma = 0.3e-6  from [0:inf);
+(*desc="Zeta temperature coefficient"*) parameter real alphazeta  = 0.2e-3  from [0:inf);
+
+// Noise parameters
+(*desc="Equivalent oxide trap density", units="m^-2"*) parameter real n_ot = 1e12 from [0:inf);
+(*desc="Gate resistance per device (divided by m); 0 removes the gate node", units="Ohm", type="instance"*) parameter real rg = 10 from [0:inf);
+
+//----------------------------------------------------------------------
+// Internal variables
+//----------------------------------------------------------------------
+real VP, PhiT, VDB_eff, VSB_eff, VGB_eff, VGD_eff, VGS_eff, VDS_eff;
+real qsat, qidsat, q1, q2, dqs;
+real X, Y, numeratorD, denominatorD, TermD, numeratorED, denominatorED, ZnD, EnD, WnD;
+real id, ID, e0, eox, epsi, We, lc;
+real umob, l_vsat, Cox, kboltz, q_e;
+real gm_frac1, gm_frac2, gm_frac3, gms, gmd, gm;
+real alpha, alpha_frac, alpha_frac2, alpha_frac3;
+real QI, QD, QS, QG, QB, QID, QIS, QBwi;
+real Cgso, Cgdo, Cdso, Csdo;
+real Cgs, Cgd, Cgb, Cbs, Cbd, Cds, Csd, Cm;
+real Cgs_ov, Cgd_ov, Cjdb, Cjsb, Cjdb_sw, Cjsb_sw;
+real qovd, qovs, qjd, qjs;
+real vt0_T, is_T, sigma_T, zeta_T, Tin, isg;
+real func_thermal, func_flicker;
+real gmin;
+
+//----------------------------------------------------------------------
+// Operating point outputs
+// The simulator uses the terminal charges (ddt(Q) below). gm/gms/gmd and the
+// intrinsic C*_op are analytical estimates, not exact derivatives of the
+// simulated current and charges; use a native AC analysis for that response.
+// Cjsb_op/Cjdb_op are exact: the junction charges are integrals of C(V).
+//----------------------------------------------------------------------
+`OPP(qS_op,     "",          "Normalised source charge density")
+`OPP(qD_op,     "",          "Normalised drain charge density")
+`OPM(Cgs_op,    "F",         "Gate-source capacitance (analytical estimate)")
+`OPM(Cgd_op,    "F",         "Gate-drain capacitance (analytical estimate)")
+`OPM(Cgb_op,    "F",         "Gate-bulk capacitance (analytical estimate)")
+`OPM(Cds_op,    "F",         "Drain-source capacitance (analytical estimate)")
+`OPM(Csd_op,    "F",         "Source-drain capacitance (analytical estimate)")
+`OPM(Cbs_op,    "F",         "Bulk-source capacitance (analytical estimate)")
+`OPM(Cbd_op,    "F",         "Bulk-drain capacitance (analytical estimate)")
+`OPM(Cm_op,     "F",         "Nonreciprocal coefficient (Csd-Cds)/n (analytical estimate)")
+`OPM(Cgs_ov_op, "F",         "Gate-source overlap capacitance")
+`OPM(Cgd_ov_op, "F",         "Gate-drain overlap capacitance")
+`OPM(Cjsb_op,   "F",         "Source-bulk junction capacitance")
+`OPM(Cjdb_op,   "F",         "Drain-bulk junction capacitance")
+`OPM(gm_op,     "A/V",       "Gate transconductance (analytical estimate)")
+`OPM(gms_op,    "A/V",       "Source transconductance (analytical estimate)")
+`OPM(gmd_op,    "A/V",       "Drain transconductance (analytical estimate)")
+`OPP(umob_op,   "m^2/(V*s)", "Carrier mobility")
+
+//----------------------------------------------------------------------
+// Junction depletion charge: integral of C(v) from 0 to V (V > 0 reverse bias),
+// C(v) = c0*(1 + v/phi)^(-mj) for v > 0 and c0*(1 - mj*v/phi) for v <= 0,
+// so that dQ/dV = C(V) on both sides and Q, C and dC/dV are continuous at 0.
+//----------------------------------------------------------------------
+analog function real qdep;
+    input v, c0, phi, mj;
+    real v, c0, phi, mj;
+    begin
+        if (v > 0.0) begin
+            if (abs(1.0 - mj) < 1e-6)
+                qdep = c0*phi*ln(1.0 + v/phi);
+            else
+                qdep = c0*phi*(exp((1.0 - mj)*ln(1.0 + v/phi)) - 1.0)/(1.0 - mj);
+        end else
+            qdep = c0*(v - 0.5*mj*v*v/phi);
+    end
+endfunction
+
+analog begin
+
+    //------------------------------------------------------------------
+    // Constants and geometry
+    //------------------------------------------------------------------
+    e0     = `P_EPS0;
+    eox    = epsrox * e0;
+    q_e    = `P_Q;
+    kboltz = `P_K;
+    epsi   = 0.1;
+    gmin   = $simparam("gmin", 0.0);
+    We     = m * w;
+    // Charge length; dlc < l is required (lc > 0).
+    lc     = l - dlc;
+    PhiT   = $vt($temperature + dtemp);
+
+    //------------------------------------------------------------------
+    // Specific current of one device: I_S = I_SH*W/L
+    //------------------------------------------------------------------
+    isg = ish*w/l;
+
+    //------------------------------------------------------------------
+    // Temperature scaling
+    //------------------------------------------------------------------
+    Tin     = $temperature + dtemp;
+    vt0_T   = vt0  + alphavt0  *(Tin - tref) + avt0/sqrt(We*l);
+    is_T    = isg  *(1.0 + ((2.0 - alphais)/Tin)*(Tin - tref)) + (isg*ak)/sqrt(We*l);
+    sigma_T = sigma + alphasigma*(Tin - tref);
+    // zeta_T >= 0; zeta_T = 0 means no velocity saturation.
+    zeta_T  = max(zeta + alphazeta*(Tin - tref), 0.0);
+
+    //------------------------------------------------------------------
+    // Effective voltages - type-scaled so all physics stays NMOS-like
+    //------------------------------------------------------------------
+    VGB_eff = type * V(gi,b);
+    VDB_eff = type * V(BDB);
+    VSB_eff = type * V(BSB);
+    VDS_eff = type * V(BDS);
+    VGD_eff = VGB_eff - VDB_eff;
+    VGS_eff = VGB_eff - VSB_eff;
+
+    //------------------------------------------------------------------
+    // Internal process parameters
+    //------------------------------------------------------------------
+    Cox  = eox / tox;
+    // Mobility from the single-device width w: is_T is per device, so umob
+    // and vsat do not depend on m.
+    umob   = (is_T * lc) / (Cox * n * PhiT * PhiT * w * 0.5);
+    // lc/vsat, with vsat = umob*PhiT/(lc*zeta_T); zero when zeta_T = 0.
+    l_vsat = (lc * lc * zeta_T) / (umob * PhiT);
+
+    //------------------------------------------------------------------
+    // Pinch-off voltage (ACM2 core)
+    //------------------------------------------------------------------
+    VP = (VGB_eff - vt0_T + sigma_T*(VDB_eff + VSB_eff)) / n;
+
+    //------------------------------------------------------------------
+    // Normalised charge densities (Algorithm 443 + UCCM)
+    //------------------------------------------------------------------
+    X = exp(((VP - VSB_eff)/PhiT) + 1.0);
+    `algo_443(X, q1)
+
+    // q1 - qsat in cancellation-free form (valid for zeta_T = 0).
+    dqs  = 2.0*q1/(1.0 + zeta_T + sqrt((1.0 + zeta_T)*(1.0 + zeta_T) + 2.0*zeta_T*q1));
+    qsat = q1 - dqs;
+
+    Y = dqs*exp(-VDS_eff/PhiT)*exp(dqs);
+    `algo_443(Y, q2)
+    q2 = q2 + qsat;
+
+    //------------------------------------------------------------------
+    // Drain current
+    //------------------------------------------------------------------
+    id = ((q2 + q1 + 2.0)/(1.0 + sqrt(zeta_T*(q1-q2)*zeta_T*(q1-q2) + epsi*epsi)))*(q1 - q2);
+    ID = m * is_T * id;
+    I(d,s) <+ type * ID;
+
+    //------------------------------------------------------------------
+    // Transconductances
+    //------------------------------------------------------------------
+    // gm, gms, gmd of the m devices, like ID.
+    qidsat   = (zeta_T/2.0)*id;
+    gm_frac1 = (2.0*m*is_T)/(PhiT*(1.0 + zeta_T*(q1-q2))*(1.0 + zeta_T*(q1-q2)));
+    gm_frac2 = (1.0 + q1) + (zeta_T/2.0)*((q1-q2)*(q1-q2));
+    gm_frac3 = (1.0 + q2) - (zeta_T/2.0)*((q1-q2)*(q1-q2));
+    gms = gm_frac1*( gm_frac2*(1.0-(sigma_T/n))*((q1-qidsat)/(1.0+q1-qidsat))
+                   + gm_frac3*(sigma_T/n)        *((q2-qidsat)/(1.0+q2-qidsat)));
+    gmd = gm_frac1*( gm_frac2*(sigma_T/n)        *((q1-qidsat)/(1.0+q1-qidsat))
+                   + gm_frac3*(1.0-(sigma_T/n))  *((q2-qidsat)/(1.0+q2-qidsat)));
+    gm  = (gm_frac1/n)*( gm_frac2*((q1-qidsat)/(1.0+q1-qidsat))
+                        - gm_frac3*((q2-qidsat)/(1.0+q2-qidsat)));
+
+    //------------------------------------------------------------------
+    // linearity factor
+    //------------------------------------------------------------------
+    alpha = (1.0 + q2 - qidsat)/(1.0 + q1 - qidsat);
+
+    //------------------------------------------------------------------
+    // Total charges
+    //------------------------------------------------------------------
+    QI    = -n*PhiT*Cox*We*lc*((2.0/3.0)*(((1.0+alpha+alpha*alpha)/(1.0+alpha))
+            *(q1+1.0-qidsat)) - 1.0) - l_vsat*ID;
+    // Constant-n bulk reference; vt0_T fixes the charge origin at fixed T.
+    QBwi = -((n-1.0)/n)*Cox*We*lc*(VGB_eff - vt0_T);
+    QB    = -((n-1.0)/n)*QI + QBwi;
+    QG    = -QB - QI;
+    QD    = -n*PhiT*Cox*We*lc*((2.0/15.0)*(q1+1.0-qidsat)
+            *((2.0+4.0*alpha+6.0*alpha*alpha+3.0*alpha*alpha*alpha)/((1.0+alpha)*(1.0+alpha)))
+            - 0.5) - 0.5*l_vsat*ID;
+    QS    = QI - QD;
+    QID   = q2*(-n*Cox*PhiT);
+    QIS   = q1*(-n*Cox*PhiT);
+
+    //------------------------------------------------------------------
+    // Intrinsic capacitance matrix
+    //------------------------------------------------------------------
+    Cgso = (2.0/3.0)*We*lc*Cox*((1.0+2.0*alpha)*(q1-qidsat))
+                             /((1.0+alpha)*(1.0+alpha)*(1.0+(q1-qidsat)));
+    Cgdo = (2.0/3.0)*We*lc*Cox*(((alpha*alpha)+2.0*alpha)*(q2-qidsat))
+                             /((1.0+alpha)*(1.0+alpha)*(1.0+(q2-qidsat)));
+    Cdso = (-4.0/15.0)*n*We*lc*Cox
+           *(((1.0+3.0*alpha+alpha*alpha)*(q1-qidsat))
+           /((1.0+alpha)*(1.0+alpha)*(1.0+alpha)*(1.0+(q1-qidsat))));
+    Csdo = (-4.0/15.0)*n*We*lc*Cox
+           *(((alpha+3.0*alpha*alpha+alpha*alpha*alpha)*(q2-qidsat))
+           /((1.0+alpha)*(1.0+alpha)*(1.0+alpha)*(1.0+(q2-qidsat))));
+
+    alpha_frac  = ((1.0-alpha)*(1.0-alpha))/((1.0+alpha)*(1.0+alpha));
+    alpha_frac2 = ((3.0*alpha+7.0)*(1.0-alpha)*(1.0-alpha))/((1.0+alpha)*(1.0+alpha)*(1.0+alpha));
+    alpha_frac3 = ((3.0+7.0*alpha)*(1.0-alpha)*(1.0-alpha))/((1.0+alpha)*(1.0+alpha)*(1.0+alpha));
+    Cgs = Cgso*(1.0-(sigma_T/n)) - Cgdo*(sigma_T/n) + ((l_vsat*gms)/(3.0*n))*alpha_frac;
+    Cgd = Cgdo*(1.0-(sigma_T/n)) - Cgso*(sigma_T/n) - ((l_vsat*gmd)/(3.0*n))*alpha_frac;
+    Cgb = ((n-1.0)/n)*(We*lc*Cox - Cgs - Cgd);
+    Cbs = (n-1.0)*Cgs;
+    Cbd = (n-1.0)*Cgd;
+    Cds = Cdso*(1.0-(sigma_T/n)) - ((l_vsat*gms)/30.0)*alpha_frac2;
+    Csd = Csdo*(1.0-(sigma_T/n)) + ((l_vsat*gmd)/30.0)*alpha_frac3;
+    Cm  = (Csd - Cds)/n;
+
+    //------------------------------------------------------------------
+    // Extrinsic capacitances
+    //------------------------------------------------------------------
+    Cgs_ov = Cox*We*ld;
+    Cgd_ov = Cox*We*ld;
+
+    if (VDB_eff > 0.0) begin
+        Cjdb    = cj0  *ad    *exp(-xd_mj  *ln(1.0 + VDB_eff/phi_zero  ));
+        Cjdb_sw = cj0sw*xj*pd *exp(-xd_mjsw*ln(1.0 + VDB_eff/phi_zerosw));
+    end else begin
+        Cjdb    = cj0  *ad    *(1.0 - xd_mj  *VDB_eff/phi_zero  );
+        Cjdb_sw = cj0sw*xj*pd *(1.0 - xd_mjsw*VDB_eff/phi_zerosw);
+    end
+
+    if (VSB_eff > 0.0) begin
+        Cjsb    = cj0  *as    *exp(-xd_mj  *ln(1.0 + VSB_eff/phi_zero  ));
+        Cjsb_sw = cj0sw*xj*ps *exp(-xd_mjsw*ln(1.0 + VSB_eff/phi_zerosw));
+    end else begin
+        Cjsb    = cj0  *as    *(1.0 - xd_mj  *VSB_eff/phi_zero  );
+        Cjsb_sw = cj0sw*xj*ps *(1.0 - xd_mjsw*VSB_eff/phi_zerosw);
+    end
+
+    qovd = Cgd_ov * VGD_eff;
+    qovs = Cgs_ov * VGS_eff;
+    // ad, as, pd, ps are per device, like w: the m devices add their junctions.
+    // Charges are integrals of the C(V) above, so dQ/dV = C(V).
+    qjd  = m*(qdep(VDB_eff, cj0*ad, phi_zero, xd_mj) + qdep(VDB_eff, cj0sw*xj*pd, phi_zerosw, xd_mjsw));
+    qjs  = m*(qdep(VSB_eff, cj0*as, phi_zero, xd_mj) + qdep(VSB_eff, cj0sw*xj*ps, phi_zerosw, xd_mjsw));
+
+    //------------------------------------------------------------------
+    // Operating point assignments
+    //------------------------------------------------------------------
+    begin : OPval
+        qS_op     = q1;
+        qD_op     = q2;
+        Cgs_op    = Cgs;
+        Cgd_op    = Cgd;
+        Cgb_op    = Cgb;
+        Cds_op    = Cds;
+        Csd_op    = Csd;
+        Cbs_op    = Cbs;
+        Cbd_op    = Cbd;
+        Cm_op     = Cm;
+        Cgs_ov_op = Cgs_ov;
+        Cgd_ov_op = Cgd_ov;
+        Cjsb_op   = m*(Cjsb + Cjsb_sw);
+        Cjdb_op   = m*(Cjdb + Cjdb_sw);
+        gm_op     = gm;
+        gms_op    = gms;
+        gmd_op    = gmd;
+        umob_op   = umob;
+    end
+
+    //------------------------------------------------------------------
+    // Transient contributions
+    // gmin uses physical V(d,b)/V(s,b): type*VDB_eff = V(d,b)
+    //------------------------------------------------------------------
+    I(gi,b) <+ type * ddt(QG);
+    I(d,b)  <+ type * ddt(QD) + V(BDB)*gmin;
+    I(s,b)  <+ type * ddt(QS) + V(BSB)*gmin;
+    I(gi,d) <+ type * ddt(qovd);
+    I(gi,s) <+ type * ddt(qovs);
+    I(d,b) <+ type * ddt(qjd);
+    I(s,b) <+ type * ddt(qjs);
+
+    //------------------------------------------------------------------
+    // Noise
+    //------------------------------------------------------------------
+    // QI is the negative (NMOS-frame) inversion charge: the PSD is -4kT*umob*QI/lc^2.
+    func_thermal = -(4.0*kboltz*Tin*umob*QI)/(lc*lc);
+
+    // ln(...) and ID both have the sign of q1 - q2, so the
+    // PSD is non-negative in both directions and zero at V_DS = 0.
+    func_flicker = (q_e*q_e*n_ot*umob/(lc*lc*n*Cox))
+                 * ln((n*Cox*PhiT - QIS)/(n*Cox*PhiT - QID))*ID;
+    I(d,s) <+ white_noise(func_thermal, "thermal") + flicker_noise(func_flicker, 1.0, "flicker");
+
+    //------------------------------------------------------------------
+    // Gate resistance
+    //------------------------------------------------------------------
+    // m parallel gates: rg/m. rg = 0 connects g to gi directly.
+    if (rg > 0.0) begin
+        I(g, gi) <+ V(g,gi)*m/rg;
+        I(g, gi) <+ white_noise(4.0*kboltz*Tin*m/rg, "rg_noise");
+    end else begin
+        V(g, gi) <+ 0.0;
+    end
+
+end
+endmodule

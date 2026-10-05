@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACM model repository</title>
+<meta name="description" content="Equations and characteristics of the ACM2 and ACM3 MOSFET models.">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header><nav><a class="brand" href="index.html">ACM model repository</a><a href="acm2.html">ACM2 2.0.0</a><a href="acm3.html">ACM3 3.0.0</a><a href="https://github.com/ACMmodel/ACM-MOSFET-models">GitHub</a></nav></header>
+<main>
+<h1>Advanced Compact MOSFET (ACM) models</h1>
+<p class="lead">The ACM models are charge-based MOSFET models for the design and simulation of analog, mixed-signal and
+RF circuits. Currents, charges, transconductances and capacitances are single-piece expressions valid in all regions of
+operation, from weak to strong inversion, and the models preserve the source-drain symmetry of the transistor. Each
+model is one Verilog-A module for NMOS and PMOS.</p>
+<div class="cards"><div class="card"><h2><a href="acm2.html">ACM2 2.0.0</a></h2>
+<p>Five DC parameters: <code>vt0</code>, <code>ish</code>, <code>n</code>, <code>sigma</code>, <code>zeta</code>. Constant slope factor.</p><p><a href="acm2.html">Equations and characteristics</a> ·
+<a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/models/acm2.va">Verilog-A source</a> · <a href="https://colab.research.google.com/github/ACMmodel/ACM-MOSFET-models/blob/main/colab/ACM2_Parameter_Extraction.ipynb">
+Parameter extraction (Colab)</a></p></div><div class="card"><h2><a href="acm3.html">ACM3 3.0.0</a></h2>
+<p>Eight DC parameters: <code>vt0</code>, <code>ish</code>, <code>phi</code>, <code>gamma</code>, <code>theta</code>, <code>sigma_wi</code>, <code>sigma_si</code>, <code>zeta</code>. Gate-dependent slope factor, mobility reduction, gate-dependent DIBL.</p><p><a href="acm3.html">Equations and characteristics</a> ·
+<a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/models/acm3.va">Verilog-A source</a> · <a href="https://colab.research.google.com/github/ACMmodel/ACM-MOSFET-models/blob/main/colab/ACM3_Parameter_Extraction.ipynb">
+Parameter extraction (Colab)</a></p></div></div>
+<p>Repository: <a href="https://github.com/ACMmodel/ACM-MOSFET-models">ACMmodel/ACM-MOSFET-models</a>: models, IHP SG13G2 cards
+(<a href="https://github.com/ACMmodel/ACM-MOSFET-models/tree/main/cards/ihp_sg13g2">cards/ihp_sg13g2</a>), ngspice examples
+(<a href="https://github.com/ACMmodel/ACM-MOSFET-models/tree/main/examples/ngspice">examples/ngspice</a>) and the
+<a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/docs/parameters.md">parameter tables</a> of both models.</p>
+
+</main>
+<footer>ACM2 2.0.0 and ACM3 3.0.0 are released under the <a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/LICENSE">ECL-2.0 license</a>.
+Source, cards and examples: <a href="https://github.com/ACMmodel/ACM-MOSFET-models">github.com/ACMmodel/ACM-MOSFET-models</a>.</footer>
+</body>
+</html>

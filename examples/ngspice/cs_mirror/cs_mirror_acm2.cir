@@ -1,0 +1,36 @@
+* Common-source amplifier (W = 10 um, L = 0.13 um, R_D = 1 kohm) and 1:1 current mirror (W = 10 um, L = 0.5 um) (ACM2, IHP SG13G2 cards, ngspice with OSDI)
+.temp 27
+.include ../../../cards/ihp_sg13g2/acm2_nmos_perL.lib
+
+* common-source amplifier
+Vdd vdd 0 1.2
+Vin in 0 dc 0.55 ac 1 sin(0.55 5m 10meg)
+N1 out in 0 0 acm2n_L0p13 w=10u l=0.13u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+Rd vdd out 1k
+Cl out 0 50f
+* current mirror
+Iref vdd g 100u
+N2 g g 0 0 acm2n_L0p5 w=10u l=0.5u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+N3 mo g 0 0 acm2n_L0p5 w=10u l=0.5u ad=3.4p as=3.4p pd=20.68u ps=20.68u
+Vmo mo 0 0.6
+.control
+pre_osdi ../../../models/acm2.osdi
+set noaskquit
+set numdgt=8
+op
+print v(out) i(Vdd) v(g) i(Vmo) > cs_mirror_acm2_results.txt
+ac dec 20 1e3 1e11
+meas ac gain_db max vdb(out)
+let g3 = gain_db - 3
+meas ac f3db when vdb(out)=$&g3 fall=1
+print gain_db f3db >> cs_mirror_acm2_results.txt
+dc Vmo 0.05 1.2 0.01
+meas dc iout_0p6 find i(Vmo) at=0.6
+meas dc iout_1p2 find i(Vmo) at=1.2
+print iout_0p6 iout_1p2 >> cs_mirror_acm2_results.txt
+tran 1n 300n
+meas tran vout_pp pp v(out) from=100n to=300n
+print vout_pp >> cs_mirror_acm2_results.txt
+quit
+.endc
+.end
