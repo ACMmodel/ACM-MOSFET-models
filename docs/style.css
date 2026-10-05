@@ -6,7 +6,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{border-bottom:1px solid var(--rule);background:var(--surface)}
-header nav{max-width:62rem;margin:0 auto;padding:.75rem 16px;display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;
+header nav{max-width:80rem;margin:0 auto;padding:.75rem 16px;display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;
 align-items:baseline}
 header nav .brand{font-weight:600;color:var(--ink);margin-right:auto}
 main{max-width:62rem;margin:0 auto;padding:1.5rem 16px 3rem}
@@ -28,11 +28,21 @@ figure img{display:block;width:auto;max-width:100%;height:auto;background:#fcfcf
 figcaption{font-size:.92rem;color:var(--ink2);margin-top:.5rem;max-width:none}
 figcaption strong{color:var(--ink)}
 .data{white-space:nowrap}
-.toc{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.75rem 1.25rem;margin:1.25rem 0}
-.toc ul{margin:.25rem 0;padding-left:0;list-style:none;columns:2 18rem}
+.layout{max-width:80rem;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:15rem minmax(0,1fr);gap:2.5rem}
+.layout main{max-width:none;margin:0;padding:1.5rem 0 3rem;min-width:0}
+.sidebar{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:1.5rem 0 1.5rem;font-size:.88rem;
+line-height:1.4}
+.sidebar strong{display:block;margin:0 0 .5rem .6rem;color:var(--ink)}
+.sidebar ul{list-style:none;margin:0;padding:0}
+.sidebar li ul{padding-left:.9rem}
+.sidebar a{display:block;padding:.22rem .6rem;border-left:2px solid var(--rule);color:var(--ink2);text-decoration:none}
+.sidebar a:hover{color:var(--link)}
+.sidebar a.active{color:var(--ink);border-left-color:var(--link);font-weight:600}
+@media (max-width:900px){.layout{display:block}.sidebar{position:static;max-height:none;margin-top:1rem;padding:.75rem;
+border:1px solid var(--rule);border-radius:6px;background:var(--surface)}}
 .lead{color:var(--ink2)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;margin:1.5rem 0}
 .card{border:1px solid var(--rule);border-radius:8px;padding:1rem 1.25rem;background:var(--surface)}
 .card h2{border:0;margin:0 0 .5rem;padding:0;font-size:1.15rem}
-footer{max-width:62rem;margin:0 auto;padding:1.5rem 16px;color:var(--ink2);font-size:.88rem;
+footer{max-width:80rem;margin:0 auto;padding:1.5rem 16px;color:var(--ink2);font-size:.88rem;
 border-top:1px solid var(--rule)}

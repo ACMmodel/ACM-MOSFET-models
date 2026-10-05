@@ -11,9 +11,11 @@
 </head>
 <body>
 <header><nav><a class="brand" href="index.html">ACM model repository</a><a href="acm2.html">ACM2 2.0.0</a><a href="acm3.html">ACM3 3.0.0</a><a href="https://github.com/ACMmodel/ACM-MOSFET-models">GitHub</a></nav></header>
+<div class="layout">
+<nav class="sidebar" aria-label="Contents"><strong>Contents</strong><ul><li><a href="#1-model-overview">1. Model overview</a></li><li><a href="#2-parameters">2. Parameters</a></li><li><a href="#3-constants-geometry-and-thermal-voltage">3. Constants, geometry and thermal voltage</a></li><li><a href="#4-specific-current-temperature-and-mismatch">4. Specific current, temperature and mismatch</a></li><li><a href="#5-mobility-and-saturation-velocity">5. Mobility and saturation velocity</a></li><li><a href="#6-terminal-voltages-and-pinch-off-voltage">6. Terminal voltages and pinch-off voltage</a></li><li><a href="#7-normalized-charge-densities">7. Normalized charge densities</a></li><li><a href="#8-drain-current">8. Drain current</a></li><li><a href="#9-transconductances-operating-point-outputs">9. Transconductances (operating-point outputs)</a></li><li><a href="#10-charges">10. Charges</a></li><li><a href="#11-capacitances">11. Capacitances</a></li><li><a href="#12-overlap-and-junctions">12. Overlap and junctions</a></li><li><a href="#13-noise">13. Noise</a></li><li><a href="#14-gate-resistance-and">14. Gate resistance and $g_{min}$</a></li><li><a href="#15-temperature">15. Temperature</a></li><li><a href="#16-mismatch">16. Mismatch</a></li><li><a href="#17-characteristics">17. Characteristics</a><ul><li><a href="#dc">DC</a></li><li><a href="#small-signal">Small signal</a></li><li><a href="#capacitances">Capacitances</a></li><li><a href="#rf">RF</a></li><li><a href="#noise">Noise</a></li></ul></li><li><a href="#references">References</a></li></ul></nav>
 <main>
 <h1>ACM2 2.0.0: model equations and characteristics</h1>
-<p class="lead">Advanced Compact MOSFET model 2 (ACM2), version 2.0.0: source <a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/models/acm2.va"><code>models/acm2.va</code></a>, module <code>acm2_va</code>. This page gives every equation of the released Verilog-A code, in the order in which the code evaluates them, with its parameters (Sections 1 to 16), and plots of the characteristics of an IHP SG13G2 NMOS device (Section 17). Parameter extraction from your own I-V data: <a href="https://colab.research.google.com/github/ACMmodel/ACM-MOSFET-models/blob/main/colab/ACM2_Parameter_Extraction.ipynb">Google Colab notebook</a>.</p><nav class="toc" aria-label="Contents"><strong>Contents</strong><ul><li><a href="#1-model-overview">1. Model overview</a></li><li><a href="#2-parameters">2. Parameters</a></li><li><a href="#3-constants-geometry-and-thermal-voltage">3. Constants, geometry and thermal voltage</a></li><li><a href="#4-specific-current-temperature-and-mismatch">4. Specific current, temperature and mismatch</a></li><li><a href="#5-mobility-and-saturation-velocity">5. Mobility and saturation velocity</a></li><li><a href="#6-terminal-voltages-and-pinch-off-voltage">6. Terminal voltages and pinch-off voltage</a></li><li><a href="#7-normalized-charge-densities">7. Normalized charge densities</a></li><li><a href="#8-drain-current">8. Drain current</a></li><li><a href="#9-transconductances-operating-point-outputs">9. Transconductances (operating-point outputs)</a></li><li><a href="#10-charges">10. Charges</a></li><li><a href="#11-capacitances">11. Capacitances</a></li><li><a href="#12-overlap-and-junctions">12. Overlap and junctions</a></li><li><a href="#13-noise">13. Noise</a></li><li><a href="#14-gate-resistance-and">14. Gate resistance and $g_{min}$</a></li><li><a href="#15-temperature">15. Temperature</a></li><li><a href="#16-mismatch">16. Mismatch</a></li><li><a href="#17-characteristics">17. Characteristics</a></li><li><a href="#references">References</a></li></ul></nav><h2 id="1-model-overview">1. Model overview</h2><p>ACM2 is a charge-based model: the drain current and the terminal charges are functions of the normalized
+<p class="lead">Advanced Compact MOSFET model 2 (ACM2), version 2.0.0: source <a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/models/acm2.va"><code>models/acm2.va</code></a>, module <code>acm2_va</code>. This page gives every equation of the released Verilog-A code, in the order in which the code evaluates them, with its parameters (Sections 1 to 16), and plots of the characteristics of an IHP SG13G2 NMOS device (Section 17). Parameter extraction from your own I-V data: <a href="https://colab.research.google.com/github/ACMmodel/ACM-MOSFET-models/blob/main/colab/ACM2_Parameter_Extraction.ipynb">Google Colab notebook</a>.</p><h2 id="1-model-overview">1. Model overview</h2><p>ACM2 is a charge-based model: the drain current and the terminal charges are functions of the normalized
 inversion charge densities at the source and drain ends of the channel, $q_S$ and $q_D$, obtained from the unified
 charge-control model (UCCM). Currents, charges and their derivatives are single-piece expressions, valid from weak
 to strong inversion, and the model is symmetric: source and drain are interchangeable. Five DC parameters set the
@@ -392,36 +394,38 @@ voltage would.</p>
 per unit area. At the source end, the UCCM</p>
 <p>$$\frac{V_P-V_{SB}}{\phi_t}=q_S-1+\ln q_S$$</p>
 <p>is solved with the Lambert function $W$, the solution of $w\,e^{w}=z$:</p>
-<p>$$q_S=W(X),\qquad X=\exp\left(\frac{V_P-V_{SB}}{\phi_t}+1\right).$$</p>
+<p>$$q_S=W\!\left[\exp\left(\frac{V_P-V_{SB}}{\phi_t}+1\right)\right].$$</p>
 <p><strong>Algorithm 443</strong> [5] evaluates $W(z)$ with a rational first estimate $w_0$ and one correction:</p>
 <p>$$w_0=\begin{cases}\dfrac{z+\frac{4}{3}z^2}{1+\frac{7}{3}z+\frac{5}{6}z^2}, &amp; z&lt;0.7385,\\[2ex] \ln z-24\,\dfrac{\ln^2 z+2\ln z-3}{7\ln^2 z+58\ln z+127}, &amp; z\ge 0.7385,\end{cases}$$</p>
 <p>$$z_n=\ln z-w_0-\ln w_0,\qquad W(z)\simeq w_0\left[1+\frac{z_n}{1+w_0}\cdot\frac{2(1+w_0)\left(1+w_0+\frac{2}{3}z_n\right)-z_n}{2(1+w_0)\left(1+w_0+\frac{2}{3}z_n\right)-2z_n}\right].$$</p>
 <p><strong>Saturation charge.</strong> Velocity saturation limits the drain-end charge to
 $q_{sat}=q_S+1+\frac{1}{\zeta}-\sqrt{\left(1+\frac{1}{\zeta}\right)^2+\frac{2q_S}{\zeta}}$. The code evaluates the
-equivalent difference without cancellation, which also holds for $\zeta=0$ ($\Delta q=q_S$, $q_{sat}=0$):</p>
-<p>$$\Delta q=q_S-q_{sat}=\frac{2\,q_S}{1+\zeta+\sqrt{(1+\zeta)^2+2\,\zeta\,q_S}},\qquad q_{sat}=q_S-\Delta q.$$</p>
+equivalent form without cancellation, which also holds for $\zeta=0$ ($q_{sat}=0$):</p>
+<p>$$q_{sat}=q_S-\frac{2\,q_S}{1+\zeta+\sqrt{(1+\zeta)^2+2\,\zeta\,q_S}}.$$</p>
 <p><strong>Drain charge.</strong> The UCCM written between source and drain, with both charges measured from $q_{sat}$,</p>
 <p>$$\frac{V_{DS}}{\phi_t}=(q_S-q_D)+\ln\frac{q_S-q_{sat}}{q_D-q_{sat}},$$</p>
 <p>gives</p>
-<p>$$q_D=q_{sat}+W(Y),\qquad Y=\Delta q\;e^{-V_{DS}/\phi_t}\;e^{\Delta q}.$$</p>
+<p>$$q_D=q_{sat}+W\!\left[(q_S-q_{sat})\exp\left(q_S-q_{sat}-\frac{V_{DS}}{\phi_t}\right)\right].$$</p>
 <p>At $V_{DS}=0$, $q_D=q_S$; in saturation ($V_{DS}\gg\phi_t$), $q_D\rightarrow q_{sat}$.</p>
-<h2 id="8-drain-current">8. Drain current</h2><p>$$i_d=\frac{(q_S+q_D+2)\,(q_S-q_D)}{1+\sqrt{\zeta^2\,(q_S-q_D)^2+\epsilon^2}},\qquad I_D=m\;I_S(T)\;i_d.$$</p>
+<h2 id="8-drain-current">8. Drain current</h2><p>$$I_D=m\,\frac{I_S(T)\,(q_S+q_D+2)\,(q_S-q_D)}{1+\sqrt{\zeta^2\,(q_S-q_D)^2+\epsilon^2}},\qquad \epsilon=0.1.$$</p>
 <p>The denominator is the velocity-saturation term $1+\zeta\,|q_S-q_D|$ with $|x|$ replaced by $\sqrt{x^2+\epsilon^2}$,
 so that it stays differentiable at $V_{DS}=0$, where it equals $1+\epsilon$. The extraction notebook
 (<code>colab/ACM2_Parameter_Extraction.ipynb</code>) uses the same expression, so <code>ish</code> is extracted with this factor.
 The drain-to-source branch carries $\mathrm{type}\cdot I_D$; the drain terminal current also contains $g_{min}V(d,b)$ (Section 14).</p>
 <h2 id="9-transconductances-operating-point-outputs">9. Transconductances (operating-point outputs)</h2><p>The simulator differentiates $I_D$ exactly. For the operating-point outputs <code>gm_op</code>, <code>gms_op</code> and <code>gmd_op</code> (of the
-$m$ devices), the code evaluates analytical expressions, with $q_{idsat}=\frac{\zeta}{2}\,i_d$:</p>
-<p>$$f_1=\frac{2\,m\,I_S(T)}{\phi_t\left[1+\zeta(q_S-q_D)\right]^2},\qquad f_2=1+q_S+\frac{\zeta}{2}(q_S-q_D)^2,\qquad f_3=1+q_D-\frac{\zeta}{2}(q_S-q_D)^2,$$</p>
-<p>$$a_S=\frac{q_S-q_{idsat}}{1+q_S-q_{idsat}},\qquad a_D=\frac{q_D-q_{idsat}}{1+q_D-q_{idsat}},$$</p>
-<p>$$g_{ms}=f_1\left[f_2\left(1-\frac{\sigma}{n}\right)a_S+f_3\,\frac{\sigma}{n}\,a_D\right],\qquad g_{md}=f_1\left[f_2\,\frac{\sigma}{n}\,a_S+f_3\left(1-\frac{\sigma}{n}\right)a_D\right],\qquad g_m=\frac{f_1}{n}\left(f_2\,a_S-f_3\,a_D\right).$$</p>
+$m$ devices), the code evaluates analytical expressions, with the normalized virtual-charge shift (also used by the
+charges, Section 10)</p>
+<p>$$q_{idsat}=\frac{I_D}{W_e\,v_{sat}\,n\,C_{ox}\,\phi_t}=\frac{\zeta\,I_D}{2\,m\,I_S(T)},$$</p>
+<p>$$\begin{aligned}g_{ms}=\frac{2\,m\,I_S(T)}{\phi_t\left[1+\zeta(q_S-q_D)\right]^2}\Bigg\{&amp;\left[1+q_S+\frac{\zeta}{2}(q_S-q_D)^2\right]\left(1-\frac{\sigma}{n}\right)\frac{q_S-q_{idsat}}{1+q_S-q_{idsat}}\\&amp;+\left[1+q_D-\frac{\zeta}{2}(q_S-q_D)^2\right]\frac{\sigma}{n}\,\frac{q_D-q_{idsat}}{1+q_D-q_{idsat}}\Bigg\},\end{aligned}$$</p>
+<p>$$\begin{aligned}g_{md}=\frac{2\,m\,I_S(T)}{\phi_t\left[1+\zeta(q_S-q_D)\right]^2}\Bigg\{&amp;\left[1+q_S+\frac{\zeta}{2}(q_S-q_D)^2\right]\frac{\sigma}{n}\,\frac{q_S-q_{idsat}}{1+q_S-q_{idsat}}\\&amp;+\left[1+q_D-\frac{\zeta}{2}(q_S-q_D)^2\right]\left(1-\frac{\sigma}{n}\right)\frac{q_D-q_{idsat}}{1+q_D-q_{idsat}}\Bigg\},\end{aligned}$$</p>
+<p>$$\begin{aligned}g_m=\frac{2\,m\,I_S(T)}{n\,\phi_t\left[1+\zeta(q_S-q_D)\right]^2}\Bigg\{&amp;\left[1+q_S+\frac{\zeta}{2}(q_S-q_D)^2\right]\frac{q_S-q_{idsat}}{1+q_S-q_{idsat}}\\&amp;-\left[1+q_D-\frac{\zeta}{2}(q_S-q_D)^2\right]\frac{q_D-q_{idsat}}{1+q_D-q_{idsat}}\Bigg\}.\end{aligned}$$</p>
 <p>These outputs are analytical estimates; the small-signal plots of Section 17 are numerical derivatives of $I_D$.</p>
 <h2 id="10-charges">10. Charges</h2><p>With the linearity factor</p>
 <p>$$\alpha=\frac{1+q_D-q_{idsat}}{1+q_S-q_{idsat}},$$</p>
 <p>the total inversion, bulk and gate charges of the $m$ devices are</p>
 <p>$$Q_I=-n\,\phi_t\,C_{ox}W_el_c\left[\frac{2}{3}\cdot\frac{1+\alpha+\alpha^2}{1+\alpha}\,(q_S+1-q_{idsat})-1\right]-\frac{l_c}{v_{sat}}\,I_D,$$</p>
-<p>$$Q_{B,wi}=-\frac{n-1}{n}\,C_{ox}W_el_c\left(V_{GB}-V_{T0}(T)\right),\qquad Q_B=-\frac{n-1}{n}\,Q_I+Q_{B,wi},\qquad Q_G=-Q_B-Q_I.$$</p>
-<p>$Q_{B,wi}$ is the bulk reference charge for a constant slope factor; $V_{T0}(T)$ fixes the charge origin at a given
+<p>$$Q_B=-\frac{n-1}{n}\left[Q_I+C_{ox}W_el_c\left(V_{GB}-V_{T0}(T)\right)\right],\qquad Q_G=-Q_B-Q_I.$$</p>
+<p>The second term of $Q_B$ is the bulk reference charge for a constant slope factor; $V_{T0}(T)$ fixes the charge origin at a given
 temperature. The charges are therefore referred to their values at $V_{GB}=V_{T0}(T)$ (hence $Q_G&lt;0$ and $Q_B&gt;0$ below threshold); only their time derivatives enter the simulation (Section 1). The inversion charge is
 split between drain and source with the Ward–Dutton partition [7]:</p>
 <p>$$Q_D=-n\,\phi_t\,C_{ox}W_el_c\left[\frac{2}{15}\,(q_S+1-q_{idsat})\,\frac{2+4\alpha+6\alpha^2+3\alpha^3}{(1+\alpha)^2}-\frac{1}{2}\right]-\frac{1}{2}\cdot\frac{l_c}{v_{sat}}\,I_D,\qquad Q_S=Q_I-Q_D.$$</p>
@@ -433,11 +437,11 @@ nonreciprocal.</p>
 <p><strong>Operating-point estimates.</strong> For the outputs <code>Cgs_op</code> … <code>Cm_op</code> the code evaluates analytical expressions:</p>
 <p>$$C_{gso}=\frac{2}{3}W_el_cC_{ox}\,\frac{(1+2\alpha)(q_S-q_{idsat})}{(1+\alpha)^2(1+q_S-q_{idsat})},\qquad C_{gdo}=\frac{2}{3}W_el_cC_{ox}\,\frac{(\alpha^2+2\alpha)(q_D-q_{idsat})}{(1+\alpha)^2(1+q_D-q_{idsat})},$$</p>
 <p>$$C_{dso}=-\frac{4}{15}\,n\,W_el_cC_{ox}\,\frac{(1+3\alpha+\alpha^2)(q_S-q_{idsat})}{(1+\alpha)^3(1+q_S-q_{idsat})},\qquad C_{sdo}=-\frac{4}{15}\,n\,W_el_cC_{ox}\,\frac{(\alpha+3\alpha^2+\alpha^3)(q_D-q_{idsat})}{(1+\alpha)^3(1+q_D-q_{idsat})},$$</p>
-<p>and, with $\beta_1=\frac{(1-\alpha)^2}{(1+\alpha)^2}$, $\beta_2=\frac{(3\alpha+7)(1-\alpha)^2}{(1+\alpha)^3}$,
-$\beta_3=\frac{(3+7\alpha)(1-\alpha)^2}{(1+\alpha)^3}$,</p>
-<p>$$C_{gs}=C_{gso}\left(1-\frac{\sigma}{n}\right)-C_{gdo}\frac{\sigma}{n}+\frac{l_c}{v_{sat}}\cdot\frac{g_{ms}}{3n}\,\beta_1,\qquad C_{gd}=C_{gdo}\left(1-\frac{\sigma}{n}\right)-C_{gso}\frac{\sigma}{n}-\frac{l_c}{v_{sat}}\cdot\frac{g_{md}}{3n}\,\beta_1,$$</p>
+<p>$$C_{gs}=C_{gso}\left(1-\frac{\sigma}{n}\right)-C_{gdo}\frac{\sigma}{n}+\frac{l_c}{v_{sat}}\,\frac{g_{ms}}{3n}\,\frac{(1-\alpha)^2}{(1+\alpha)^2},$$</p>
+<p>$$C_{gd}=C_{gdo}\left(1-\frac{\sigma}{n}\right)-C_{gso}\frac{\sigma}{n}-\frac{l_c}{v_{sat}}\,\frac{g_{md}}{3n}\,\frac{(1-\alpha)^2}{(1+\alpha)^2},$$</p>
 <p>$$C_{gb}=\frac{n-1}{n}\left(W_el_cC_{ox}-C_{gs}-C_{gd}\right),\qquad C_{bs}=(n-1)\,C_{gs},\qquad C_{bd}=(n-1)\,C_{gd},$$</p>
-<p>$$C_{ds}=C_{dso}\left(1-\frac{\sigma}{n}\right)-\frac{l_c}{v_{sat}}\cdot\frac{g_{ms}}{30}\,\beta_2,\qquad C_{sd}=C_{sdo}\left(1-\frac{\sigma}{n}\right)+\frac{l_c}{v_{sat}}\cdot\frac{g_{md}}{30}\,\beta_3,\qquad C_m=\frac{C_{sd}-C_{ds}}{n}.$$</p>
+<p>$$C_{ds}=C_{dso}\left(1-\frac{\sigma}{n}\right)-\frac{l_c}{v_{sat}}\,\frac{g_{ms}}{30}\,\frac{(3\alpha+7)(1-\alpha)^2}{(1+\alpha)^3},$$</p>
+<p>$$C_{sd}=C_{sdo}\left(1-\frac{\sigma}{n}\right)+\frac{l_c}{v_{sat}}\,\frac{g_{md}}{30}\,\frac{(3+7\alpha)(1-\alpha)^2}{(1+\alpha)^3},\qquad C_m=\frac{C_{sd}-C_{ds}}{n}.$$</p>
 <p>These are analytical estimates; the capacitances of Section 17 are the exact derivatives of the charges, obtained from transient currents.</p>
 <h2 id="12-overlap-and-junctions">12. Overlap and junctions</h2><p><strong>Overlap.</strong> $C_{gs,ov}=C_{gd,ov}=C_{ox}\,W_e\,l_d$ ($l_d$ = <code>ld</code>), with the charges $q_{ovs}=C_{gs,ov}V_{GS}$ and
 $q_{ovd}=C_{gd,ov}V_{GD}$.</p>
@@ -482,9 +486,9 @@ a terminal is swept; Fig. 2 also uses the PMOS card of the same length. The deri
 <figure id="fig-3"><img src="figures/acm2_gm.svg" alt="ACM2 2.0.0 gm, gm2 and gm3" loading="lazy"><figcaption><strong>Fig. 3.</strong> (a) $g_m=\partial I_D/\partial V_{GB}$, (b) $g_{m2}=\partial^2 I_D/\partial V_{GB}^2$ and (c) $g_{m3}=\partial^3 I_D/\partial V_{GB}^3$ versus gate voltage for $V_{DS}$ = 0.05, 0.6, 1.2 V. <a class="data" href="data/acm2_gm.csv">Data (CSV)</a></figcaption></figure>
 <figure id="fig-4"><img src="figures/acm2_gmd.svg" alt="ACM2 2.0.0 drain transconductance" loading="lazy"><figcaption><strong>Fig. 4.</strong> Drain transconductance $g_{md}=\partial I_D/\partial V_D$ versus drain voltage for $V_{GB}$ = 0.4, 0.6, 0.8, 1, 1.2 V. <a class="data" href="data/acm2_gmd.csv">Data (CSV)</a></figcaption></figure>
 <h3 id="capacitances">Capacitances</h3>
-<figure id="fig-5"><img src="figures/acm2_caps.svg" alt="ACM2 2.0.0 capacitances at zero drain-source voltage" loading="lazy"><figcaption><strong>Fig. 5.</strong> Capacitances $C_{xy}=-\partial Q_x/\partial V_y$ versus gate voltage at $V_{DS}=0$, from transient currents: terminal $y$ is ramped from −1 mV to +1 mV in 1 ns with the other terminals at 0 V, and at mid-ramp, where the conduction currents vanish, the current into terminal $x$ is $dQ_x/dt=-C_{xy}\,dV_y/dt$. (a) $C_{GS}$, $C_{GD}$ (overlap included) and $C_{GB}$; (b) $C_{DS}$ and $C_{SD}$. $r_g=0$. <a class="data" href="data/acm2_caps.csv">Data (CSV)</a></figcaption></figure>
+<figure id="fig-5"><img src="figures/acm2_caps.svg" alt="ACM2 2.0.0 capacitances" loading="lazy"><figcaption><strong>Fig. 5.</strong> Capacitances $C_{xy}=-\partial Q_x/\partial V_y$ versus gate voltage at $V_{DS}$ = 0.6 V, from transient currents: terminal $y$ is ramped by ±1 mV around its bias in 1 ns, once up and once down; at mid-ramp both runs have the same conduction currents, so half the difference of the currents into terminal $x$ is the displacement current $dQ_x/dt=-C_{xy}\,dV_y/dt$. $C_{GS}$ and $C_{GD}$ include the overlap capacitances; $r_g=0$. <a class="data" href="data/acm2_caps.csv">Data (CSV)</a></figcaption></figure>
 <h3 id="rf">RF</h3>
-<figure id="fig-6"><img src="figures/acm2_y.svg" alt="ACM2 2.0.0 Y parameters" loading="lazy"><figcaption><strong>Fig. 6.</strong> Common-source short-circuit admittances from 0.1 to 30 GHz at $V_{GB}$ = 0.5707 V, $V_{DS}$ = 0.6 V, with $r_g$ = 43 Ω (gate resistance of the 10-finger layout of the LNA example): (a) $Y_{11}$, (b) $Y_{12}$, (c) $Y_{21}$ and (d) $Y_{22}$; gate is port 1, drain is port 2. <a class="data" href="data/acm2_y.csv">Data (CSV)</a></figcaption></figure>
+<figure id="fig-6"><img src="figures/acm2_y.svg" alt="ACM2 2.0.0 Y parameters" loading="lazy"><figcaption><strong>Fig. 6.</strong> Common-source short-circuit admittances from 0.1 to 30 GHz at $V_{GB}$ = 0.5707 V, $V_{DS}$ = 0.6 V, with $r_g$ = 43 Ω (gate resistance of the 10-finger layout of the LNA example): (a) magnitude and (b) phase of $Y_{11}$, $Y_{12}$, $Y_{21}$ and $Y_{22}$; gate is port 1, drain is port 2. <a class="data" href="data/acm2_y.csv">Data (CSV)</a></figcaption></figure>
 <figure id="fig-7"><img src="figures/acm2_s.svg" alt="ACM2 2.0.0 S parameters" loading="lazy"><figcaption><strong>Fig. 7.</strong> Common-source $S$ parameters ($Z_0$ = 50 Ω) from 0.1 to 30 GHz at the bias of Fig. 6: (a) $S_{11}$ and $S_{22}$ on the Smith chart, (b) magnitudes and (c) phases of $S_{21}$ and $S_{12}$. <a class="data" href="data/acm2_s.csv">Data (CSV)</a></figcaption></figure>
 <h3 id="noise">Noise</h3>
 <figure id="fig-8"><img src="figures/acm2_psd.svg" alt="ACM2 2.0.0 drain-current noise" loading="lazy"><figcaption><strong>Fig. 8.</strong> Short-circuit drain-current noise power spectral density from 1 Hz to 30 GHz in weak ($V_{GB}$ = 0.25 V), moderate ($V_{GB}=V_{T0}$ = 0.453 V) and strong ($V_{GB}$ = 1.2 V) inversion, (a) in the triode region ($V_{DS}$ = 13 mV) and (b) in saturation ($V_{DS}$ = 1.2 V). $r_g$ = 43 Ω, with its thermal noise; flicker noise with the default $N_{ot}$ = $10^{12}$ m$^{-2}$ (not extracted for the IHP cards). <a class="data" href="data/acm2_psd.csv">Data (CSV)</a></figcaption></figure>
@@ -505,6 +509,18 @@ design,&quot; <em>IEEE Trans. Electron Devices</em>, vol. 50, no. 8, pp. 1815–
 Devices</em>, vol. 27, no. 8, pp. 1571–1578, Aug. 1980, doi: 10.1109/T-ED.1980.20072.</p>
 
 </main>
+</div>
+<script>
+(() => {   // highlight the section of the contents that is being read
+  const links = [...document.querySelectorAll('.sidebar a')];
+  const byId = new Map(links.map(a => [decodeURIComponent(a.hash.slice(1)), a]));
+  const mark = id => { links.forEach(a => a.classList.toggle('active', a === byId.get(id))); };
+  const seen = new IntersectionObserver(entries => {
+    entries.filter(e => e.isIntersecting).forEach(e => mark(e.target.id));
+  }, {rootMargin: '0px 0px -75% 0px'});
+  document.querySelectorAll('main h2[id], main h3[id]').forEach(h => seen.observe(h));
+})();
+</script>
 <footer>ACM2 2.0.0 and ACM3 3.0.0 are released under the <a href="https://github.com/ACMmodel/ACM-MOSFET-models/blob/main/LICENSE">ECL-2.0 license</a>.
 Source, cards and examples: <a href="https://github.com/ACMmodel/ACM-MOSFET-models">github.com/ACMmodel/ACM-MOSFET-models</a>.</footer>
 </body>
