@@ -1,6 +1,6 @@
 # Getting started with OpenVAF
 
-OpenVAF is an executable open-source tool designed to convert Verilog-A (".va") files into ".osdi" files. These ".osdi" files enable the insertion of the [ACM2V0](/Verilog-A/) model into the ngspice 39+ simulator.
+OpenVAF is an executable open-source tool designed to convert Verilog-A (".va") files into ".osdi" files. These ".osdi" files enable the insertion of the [ACM2V0](/legacy/Verilog-A/) model into the ngspice 39+ simulator.
 
 Build a OSDI file for ngspice using OpenVAF:
 

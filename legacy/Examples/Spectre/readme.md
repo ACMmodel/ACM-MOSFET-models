@@ -6,7 +6,7 @@ To create a Verilog-A-defined component,
 
 * First create a new cell view, changing the type from schematic to Verilog-A.
 
-** In this step you can add the [NMOS_ACM Verilog-A](/Verilog-A/NMOS_ACM_2V0.va) or the [PMOS_ACM Verilog-A](/Verilog-A/PMOS_ACM_2V0.va) codes.
+** In this step you can add the [NMOS_ACM Verilog-A](/legacy/Verilog-A/NMOS_ACM_2V0.va) or the [PMOS_ACM Verilog-A](/legacy/Verilog-A/PMOS_ACM_2V0.va) codes.
 
 * Cadence will prompt you to create a symbol for your new component once you do.
 
